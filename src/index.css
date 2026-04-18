@@ -1,0 +1,140 @@
+/* Portfolio "Signal" — Global Design System */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Fontsource Imports ── */
+@import '@fontsource/syne/400.css';
+@import '@fontsource/syne/500.css';
+@import '@fontsource/syne/600.css';
+@import '@fontsource/syne/700.css';
+@import '@fontsource/syne/800.css';
+@import '@fontsource/dm-sans/300.css';
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/dm-mono/400.css';
+@import '@fontsource/dm-mono/500.css';
+
+/* ── CSS Variables — Blueprint Design Tokens ── */
+:root {
+  --bg: #080808;
+  --surface: #101010;
+  --surface2: #161616;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-light: rgba(255, 255, 255, 0.12);
+  --text: #f0ede8;
+  --muted: #888888;
+  --muted2: #555555;
+  --accent: #d4f57a;
+  --accent2: #7af5c8;
+  --accent3: #f57ab4;
+  --accent4: #f5c57a;
+  --red: #ff5a5a;
+  --blue: #7ab4f5;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+/* ── Base Reset ── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Lenis will override this — keeping as fallback */
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  cursor: none; /* Hide default cursor — GlobalCursor takes over */
+}
+
+/* ── Selection ── */
+::selection {
+  background-color: rgba(212, 245, 122, 0.2);
+  color: var(--text);
+}
+
+/* ── Scrollbar (Chromium) ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* ── Global Typography Classes ── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ── Frosted Glass Panel ── */
+.glass-panel {
+  background: rgba(16, 16, 16, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+/* ── Section Base ── */
+.section-padding {
+  padding: 120px 64px;
+}
+
+@media (max-width: 768px) {
+  .section-padding {
+    padding: 80px 24px;
+  }
+
+  body {
+    cursor: auto; /* Restore default cursor on mobile */
+  }
+}
+
+/* ── Accent Glow (for hover states) ── */
+.accent-glow {
+  box-shadow: 0 0 20px rgba(212, 245, 122, 0.1),
+              0 0 60px rgba(212, 245, 122, 0.05);
+}
+
+/* ── Will-change helper classes ── */
+.will-transform {
+  will-change: transform;
+}
+
+.will-opacity {
+  will-change: opacity;
+}

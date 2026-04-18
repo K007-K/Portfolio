@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Blueprint — World-Class Developer Portfolio System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #080808;
+    --surface: #101010;
+    --surface2: #161616;
+    --border: rgba(255,255,255,0.07);
+    --border-light: rgba(255,255,255,0.12);
+    --text: #f0ede8;
+    --muted: #888;
+    --muted2: #555;
+    --accent: #d4f57a;
+    --accent2: #7af5c8;
+    --accent3: #f57ab4;
+    --accent4: #f5c57a;
+    --red: #ff5a5a;
+    --blue: #7ab4f5;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 64px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(212,245,122,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(122,180,245,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .doc-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .doc-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .cover-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0 60px;
+  }
+
+  .cover-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cover-eyebrow::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  .cover-title {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    max-width: 900px;
+    margin-bottom: 32px;
+  }
+
+  .cover-title .accent { color: var(--accent); }
+  .cover-title .dim { color: var(--muted2); }
+
+  .cover-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 520px;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .toc-quick {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .toc-quick a {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+
+  .toc-quick a:hover { color: var(--text); }
+
+  .version-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+    border: 1px solid var(--border-light);
+    padding: 6px 12px;
+    border-radius: 4px;
+  }
+
+  /* ── LAYOUT ── */
+  .doc-body {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 64px;
+  }
+
+  /* ── CHAPTER HEADER ── */
+  .chapter {
+    margin-bottom: 72px;
+  }
+
+  .chapter-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .chapter-num::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .chapter-title {
+    font-family: var(--font-display);
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .chapter-intro {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 640px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .section-body {
+    color: var(--muted);
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  .section-body p { margin-bottom: 14px; }
+  .section-body p:last-child { margin-bottom: 0; }
+
+  /* ── CONCEPT CARDS ── */
+  .concepts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 32px 0;
+  }
+
+  .concept-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .concept-card:first-child { border-radius: 12px 12px 0 0; }
+  .concept-card:last-child { border-radius: 0 0 12px 12px; }
+
+  .concept-card:hover {
+    border-color: var(--border-light);
+  }
+
+  .concept-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--concept-color, var(--accent));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .concept-card:hover::before { opacity: 1; }
+
+  .concept-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 24px;
+  }
+
+  .concept-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+
+  .concept-header { flex: 1; }
+
+  .concept-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  .concept-tagline {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--concept-color, var(--accent));
+    letter-spacing: 0.05em;
+  }
+
+  .concept-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--concept-color, var(--accent));
+    color: var(--concept-color, var(--accent));
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .concept-desc {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  .concept-mechanics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .mechanic {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    border-radius: 6px;
+  }
+
+  .mechanic-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .mechanic-value {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ── RECOMMENDED CARD ── */
+  .recommended {
+    background: linear-gradient(135deg, rgba(212,245,122,0.05) 0%, rgba(122,245,200,0.03) 100%);
+    border-color: rgba(212,245,122,0.2);
+    --concept-color: var(--accent);
+  }
+
+  .recommended::after {
+    content: '★ RECOMMENDED';
+    position: absolute;
+    top: 16px; right: 16px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    opacity: 0.8;
+  }
+
+  /* ── TOOL MATRIX ── */
+  .tool-matrix {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin: 28px 0;
+  }
+
+  .tool-col-header {
+    padding: 12px 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  .tool-col-header.use { color: var(--accent); background: rgba(212,245,122,0.05); border-radius: 6px 6px 0 0; }
+  .tool-col-header.opt { color: var(--accent4); background: rgba(245,197,122,0.05); border-radius: 6px 6px 0 0; }
+  .tool-col-header.skip { color: var(--red); background: rgba(255,90,90,0.05); border-radius: 6px 6px 0 0; }
+
+  .tool-item {
+    padding: 10px 16px;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .tool-item:last-child { border-radius: 0 0 6px 6px; }
+
+  .tool-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  .tool-dot.use { background: var(--accent); }
+  .tool-dot.opt { background: var(--accent4); }
+  .tool-dot.skip { background: var(--red); }
+
+  .tool-name { color: var(--text); font-weight: 500; font-size: 13px; }
+  .tool-why { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+  /* ── STACK DIAGRAM ── */
+  .stack-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 28px 0;
+  }
+
+  .stack-layer {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stack-layer:last-child { border-bottom: none; }
+
+  .stack-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    width: 110px;
+    padding: 14px 16px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .stack-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px;
+    flex: 1;
+  }
+
+  .stack-chip {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .stack-chip.core { color: var(--accent); border-color: rgba(212,245,122,0.25); background: rgba(212,245,122,0.05); }
+  .stack-chip.anim { color: var(--blue); border-color: rgba(122,180,245,0.25); background: rgba(122,180,245,0.05); }
+  .stack-chip.ui { color: var(--accent2); border-color: rgba(122,245,200,0.25); background: rgba(122,245,200,0.05); }
+  .stack-chip.tool { color: var(--accent4); border-color: rgba(245,197,122,0.25); background: rgba(245,197,122,0.05); }
+  .stack-chip.deploy { color: var(--accent3); border-color: rgba(245,122,180,0.25); background: rgba(245,122,180,0.05); }
+
+  /* ── SECTION MAP ── */
+  .section-map {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 28px 0;
+  }
+
+  .section-row {
+    display: grid;
+    grid-template-columns: 40px 160px 1fr;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .section-row:first-child { border-radius: 10px 10px 0 0; }
+  .section-row:last-child { border-radius: 0 0 10px 10px; }
+
+  .section-idx {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .section-name {
+    padding: 16px;
+    border-right: 1px solid var(--border);
+  }
+
+  .section-name strong {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .section-name span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted2);
+  }
+
+  .section-details {
+    padding: 14px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .detail-chip {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  /* ── ANIMATION TABLE ── */
+  .anim-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 2px;
+    margin: 24px 0;
+  }
+
+  .anim-table th {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted2);
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .anim-table td {
+    padding: 12px 14px;
+    font-size: 13px;
+    background: var(--surface);
+    vertical-align: top;
+  }
+
+  .anim-table td:first-child { font-weight: 500; color: var(--text); border-radius: 6px 0 0 6px; }
+  .anim-table td:last-child { color: var(--muted); border-radius: 0 6px 6px 0; }
+  .anim-table td:not(:first-child):not(:last-child) { color: var(--muted); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+
+  /* ── ROADMAP ── */
+  .roadmap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 28px 0;
+    counter-reset: step;
+  }
+
+  .roadmap-step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .roadmap-step:first-child { border-radius: 10px 10px 0 0; }
+  .roadmap-step:last-child { border-radius: 0 0 10px 10px; }
+
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted2);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+    counter-increment: step;
+  }
+
+  .step-content { padding: 18px 20px; }
+
+  .step-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .step-title span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted2);
+    font-weight: 400;
+    margin-left: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .step-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+
+  .step-tasks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .step-task {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 4px 9px;
+    border-radius: 3px;
+  }
+
+  /* ── PROMPTS ── */
+  .prompt-block {
+    margin: 20px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .prompt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .prompt-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .prompt-skill {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted2);
+    background: var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  .prompt-text {
+    padding: 16px 18px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+
+  .prompt-text .k { color: var(--accent); }
+  .prompt-text .v { color: var(--blue); }
+  .prompt-text .s { color: var(--accent3); }
+
+  /* ── SEO CHECKLIST ── */
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 24px 0;
+  }
+
+  .check-item {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+
+  .check-item:first-child { border-radius: 8px 8px 0 0; }
+  .check-item:last-child { border-radius: 0 0 8px 8px; }
+
+  .check-box {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--accent);
+    background: rgba(212,245,122,0.05);
+  }
+
+  .check-label { color: var(--text); }
+  .check-impact {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 7px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .check-impact.high { color: var(--accent); border: 1px solid rgba(212,245,122,0.2); }
+  .check-impact.med { color: var(--accent4); border: 1px solid rgba(245,197,122,0.2); }
+  .check-impact.low { color: var(--muted); border: 1px solid var(--border); }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 16px 0;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: var(--muted);
+    white-space: pre;
+  }
+
+  .code-block .cm { color: var(--muted2); font-style: italic; }
+  .code-block .kw { color: var(--accent); }
+  .code-block .str { color: var(--accent2); }
+  .code-block .fn { color: var(--blue); }
+  .code-block .num { color: var(--accent3); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 2px solid var(--accent);
+    padding: 14px 20px;
+    background: rgba(212,245,122,0.03);
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .callout strong { color: var(--accent); font-weight: 600; }
+  .callout.warn { border-color: var(--accent4); background: rgba(245,197,122,0.03); }
+  .callout.warn strong { color: var(--accent4); }
+  .callout.info { border-color: var(--blue); background: rgba(122,180,245,0.03); }
+  .callout.info strong { color: var(--blue); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 64px 0;
+  }
+
+  /* ── RESOURCE GRID ── */
+  .resource-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .resource-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+
+  .resource-card:hover { border-color: var(--border-light); }
+
+  .resource-name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .resource-url {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .resource-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .resource-use {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+  }
+
+  .resource-use span {
+    color: var(--accent2);
+  }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 40px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+    line-height: 1.8;
+  }
+
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--muted2);
+  }
+
+  .footer-brand span { color: var(--accent); }
+
+  /* ── INLINE HIGHLIGHT ── */
+  code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--accent2);
+  }
+
+  strong { color: var(--text); font-weight: 600; }
+
+  ul, ol {
+    padding-left: 20px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  ul li, ol li { margin-bottom: 6px; }
+
+  /* Concept color variants */
+  .c-lime { --concept-color: #d4f57a; }
+  .c-teal { --concept-color: #7af5c8; }
+  .c-blue { --concept-color: #7ab4f5; }
+  .c-pink { --concept-color: #f57ab4; }
+  .c-orange { --concept-color: #f5a07a; }
+  .c-violet { --concept-color: #b47af5; }
+  .c-red { --concept-color: #f57a7a; }
+  .c-gold { --concept-color: #f5c57a; }
+
+  @media print {
+    body { background: white; color: black; }
+    .cover { page-break-after: always; }
+    .chapter { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ████████████ COVER ████████████ -->
+<div class="cover">
+  <div class="cover-top">
+    <div class="doc-label">Portfolio Architecture Document · v2.0</div>
+    <div class="doc-meta">
+      Classification: Implementation-Ready<br>
+      Audience: 3rd Year CSE Developer<br>
+      Status: Final
+    </div>
+  </div>
+
+  <div class="cover-main">
+    <div class="cover-eyebrow">World-Class Portfolio Blueprint</div>
+    <h1 class="cover-title">
+      Build a Portfolio<br>
+      They <span class="accent">Can't Forget.</span><br>
+      <span class="dim">Not Just Look At.</span>
+    </h1>
+    <p class="cover-sub">
+      10 genuinely rare portfolio concepts. Full tech stack with 21st.dev, Animate UI, PatternCraft & Lucide Animated. Step-by-step prompts for Antigravity. Zero clichés.
+    </p>
+  </div>
+
+  <div class="cover-bottom">
+    <nav class="toc-quick">
+      <a href="#concepts">Concepts</a>
+      <a href="#tools">Tool System</a>
+      <a href="#stack">Stack</a>
+      <a href="#sections">Sections</a>
+      <a href="#animations">Animations</a>
+      <a href="#build">Build Plan</a>
+      <a href="#prompts">Prompts</a>
+      <a href="#seo">SEO</a>
+    </nav>
+    <div class="version-tag">2026 Edition</div>
+  </div>
+</div>
+
+<!-- ████████████ BODY ████████████ -->
+<div class="doc-body">
+
+
+  <!-- ═══════════════ CHAPTER 0: RESOURCES ═══════════════ -->
+  <div class="chapter" id="tools">
+    <div class="chapter-num">00 — Your Arsenal</div>
+    <h2 class="chapter-title">Every Tool, Mapped to Its Purpose</h2>
+    <p class="chapter-intro">You gave me links. Here's exactly how each one plugs into your portfolio — not vaguely, but with specific use cases and when to reach for each one.</p>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">New Resources You Brought In</h3>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <div class="resource-name">21st.dev</div>
+        <div class="resource-url">21st.dev</div>
+        <div class="resource-desc">Community registry for premium shadcn/ui React components. Think "npm for design engineers." Install any component in one <code>npx</code> command.</div>
+        <div class="resource-use">Use for → <span>Navbar, cards, dialogs, dock navigation, spotlight effects</span></div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-name">PatternCraft</div>
+        <div class="resource-url">patterncraft.fun</div>
+        <div class="resource-desc">257+ CSS/Tailwind background patterns — grids, dots, circuits, noise, gradients. One-click copy. Works perfectly as section textures.</div>
+        <div class="resource-use">Use for → <span>Hero bg texture, section separators, skill section canvas bg</span></div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-name">Animate UI</div>
+        <div class="resource-url">animate-ui.com</div>
+        <div class="resource-desc">Animated React components — text effects, counters, borders, loaders, transitions. Each is a drop-in React component with Framer Motion.</div>
+        <div class="resource-use">Use for → <span>Text reveals, number counters, animated borders, page transitions</span></div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-name">Lucide Animated</div>
+        <div class="resource-url">lucide-animated.com</div>
+        <div class="resource-desc">Animated versions of Lucide icons. SVG stroke animations on hover/mount. Drop-in replacement for lucide-react.</div>
+        <div class="resource-use">Use for → <span>Nav icons, social links, skill icons, contact section</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">Full Tool Decision Matrix</h3>
+    <div class="tool-matrix">
+      <div class="tool-col-header use">✓ Use — Essential</div>
+      <div class="tool-col-header opt">◐ Optional — Situational</div>
+      <div class="tool-col-header skip">✕ Skip — Overkill</div>
+
+      <div class="tool-item"><div class="tool-dot use"></div><div><div class="tool-name">GSAP + ScrollTrigger</div><div class="tool-why">Your scroll animation backbone. Nothing competes with its precision. Every section reveal, pin, and timeline runs through here.</div></div></div>
+      <div class="tool-item"><div class="tool-dot opt"></div><div><div class="tool-name">Anime.js</div><div class="tool-why">Only use it for SVG path animations and looping micro-interactions on the skills section. GSAP handles everything else.</div></div></div>
+      <div class="tool-item"><div class="tool-dot skip"></div><div><div class="tool-name">Barba.js</div><div class="tool-why">Solves multi-page transitions. You have a single-page portfolio. Dead weight.</div></div></div>
+
+      <div class="tool-item"><div class="tool-dot use"></div><div><div class="tool-name">Lenis Smooth Scroll</div><div class="tool-why">Wire to GSAP's ScrollTrigger for buttery scroll. 3 lines of setup code. Transforms feel of entire site.</div></div></div>
+      <div class="tool-item"><div class="tool-dot opt"></div><div><div class="tool-name">Floating UI</div><div class="tool-why">Use only for the skill-node tooltip popovers and contact social tooltips. Smart auto-positioning.</div></div></div>
+      <div class="tool-item"><div class="tool-dot skip"></div><div><div class="tool-name">AOS (Animate on Scroll)</div><div class="tool-why">GSAP ScrollTrigger replaces it entirely with more control. Having both creates conflicts.</div></div></div>
+
+      <div class="tool-item"><div class="tool-dot use"></div><div><div class="tool-name">Animate UI</div><div class="tool-why">Drop-in animated components: text reveals, morphing text, number counters, glitch effects. Saves hours of animation work.</div></div></div>
+      <div class="tool-item"><div class="tool-dot opt"></div><div><div class="tool-name">Spline</div><div class="tool-why">Use for hero section only. Embed one scene. Keep under 2MB. If performance is tight, replace with a CSS-only animated background from PatternCraft.</div></div></div>
+      <div class="tool-item"><div class="tool-dot skip"></div><div><div class="tool-name">Chart.js</div><div class="tool-why">No data charting in a portfolio. Remove entirely.</div></div></div>
+
+      <div class="tool-item"><div class="tool-dot use"></div><div><div class="tool-name">Lucide Animated</div><div class="tool-why">Every icon in your UI should have a purpose-driven entrance. These are ready-made. Use across nav, skills, social links.</div></div></div>
+      <div class="tool-item"><div class="tool-dot opt"></div><div><div class="tool-name">SweetAlert2</div><div class="tool-why">One-liner contact form success state. Style it to match your dark theme. Don't over-use.</div></div></div>
+      <div class="tool-item"><div class="tool-dot skip"></div><div><div class="tool-name">Remotion</div><div class="tool-why">Video generation framework. Not for web portfolios.</div></div></div>
+
+      <div class="tool-item"><div class="tool-dot use"></div><div><div class="tool-name">21st.dev Components</div><div class="tool-why">Install premium nav, dock, spotlight, and card components directly into your project via npx. Production quality, zero effort.</div></div></div>
+      <div class="tool-item"><div class="tool-dot opt"></div><div><div class="tool-name">Luxon</div><div class="tool-why">Only if you want live "years of experience" or "last commit X days ago" readouts. Otherwise skip.</div></div></div>
+      <div class="tool-item"><div class="tool-dot skip"></div><div><div class="tool-name">Tinte.dev</div><div class="tool-why">Color theme generator — use it BEFORE coding to lock your palette, then hardcode the CSS vars. Don't depend on it at runtime.</div></div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ═══════════════ CHAPTER 1: CONCEPTS ═══════════════ -->
+  <div class="chapter" id="concepts">
+    <div class="chapter-num">01 — The Concept</div>
+    <h2 class="chapter-title">10 Portfolio Concepts That<br>Nobody Else is Building</h2>
+    <p class="chapter-intro">These are not "creative spins" on the same tired layout. Each one is a fundamentally different experience that communicates your technical depth before the visitor reads a single word. Ranked from most to least buildable in a week.</p>
+  </div>
+
+  <div class="concepts-grid">
+
+    <!-- CONCEPT 1 — RECOMMENDED -->
+    <div class="concept-card recommended c-lime">
+      <div class="concept-top">
+        <div class="concept-num">01</div>
+        <div class="concept-header">
+          <div class="concept-name">"Signal"</div>
+          <div class="concept-tagline">The Reactive Noise Field</div>
+        </div>
+        <div class="concept-badge">Top Pick</div>
+      </div>
+      <p class="concept-desc">
+        Your portfolio's background is a live WebGL noise field that <strong>physically reacts to how you scroll</strong>. Scroll fast — the field becomes turbulent, chaotic. Scroll slow — it settles into smooth, organic waves. The entire atmosphere of the site breathes with the user's behavior. Section content sits on top in frosted glass panels over the living field. Nothing about this is decoration — the field IS the portfolio's personality.
+      </p>
+      <p class="concept-desc">
+        Built with a raw canvas + simplex noise or GLSL shader (small, no Three.js needed). PatternCraft dot grid overlaid as a second layer at 4% opacity. Lucide Animated icons throughout. Section panels use backdrop-filter blur so the noise bleeds through. Animate UI for text reveals.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Background</div><div class="mechanic-value">Canvas simplex noise field, GLSL shader</div></div>
+        <div class="mechanic"><div class="mechanic-label">Reactivity</div><div class="mechanic-value">Scroll velocity → noise amplitude</div></div>
+        <div class="mechanic"><div class="mechanic-label">Panels</div><div class="mechanic-value">Frosted glass over live noise</div></div>
+        <div class="mechanic"><div class="mechanic-label">Scroll</div><div class="mechanic-value">Lenis + GSAP ScrollTrigger</div></div>
+        <div class="mechanic"><div class="mechanic-label">Color</div><div class="mechanic-value">Tinte.dev → dark mono + 1 accent</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~5–7 days solo</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 2 -->
+    <div class="concept-card c-teal">
+      <div class="concept-top">
+        <div class="concept-num">02</div>
+        <div class="concept-header">
+          <div class="concept-name">"The Aperture"</div>
+          <div class="concept-tagline">Depth-of-Field Portfolio</div>
+        </div>
+        <div class="concept-badge">Visual Shock</div>
+      </div>
+      <p class="concept-desc">
+        Everything outside your current focal section is <strong>blurred with CSS backdrop-filter</strong>. As you scroll through sections, the "lens" refocuses. Background elements are always soft. Your content snaps sharp. Mouse movement slightly shifts the depth — hover left, the right side softens. This creates genuine spatial depth without any 3D library.
+      </p>
+      <p class="concept-desc">
+        The hero uses a Spline scene that's intentionally soft/hazy. As you arrive at each section, a GSAP timeline removes the blur in a 400ms transition while simultaneously brightening. Leaving a section blurs it back. Sections feel like memories — some sharp, some fading.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Core Effect</div><div class="mechanic-value">CSS filter: blur() + GSAP control</div></div>
+        <div class="mechanic"><div class="mechanic-label">Scroll</div><div class="mechanic-value">GSAP ScrollTrigger focus zones</div></div>
+        <div class="mechanic"><div class="mechanic-label">Mouse</div><div class="mechanic-value">Perspective shift via JS tracking</div></div>
+        <div class="mechanic"><div class="mechanic-label">Hero</div><div class="mechanic-value">Spline 3D, intentionally hazy</div></div>
+        <div class="mechanic"><div class="mechanic-label">Texture</div><div class="mechanic-value">PatternCraft noise overlay at 3%</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~4–5 days solo</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 3 -->
+    <div class="concept-card c-violet">
+      <div class="concept-top">
+        <div class="concept-num">03</div>
+        <div class="concept-header">
+          <div class="concept-name">"Solstice"</div>
+          <div class="concept-tagline">A Portfolio With a Sky</div>
+        </div>
+        <div class="concept-badge">World-Building</div>
+      </div>
+      <p class="concept-desc">
+        Your portfolio exists in a world that <strong>changes based on the time of day the visitor arrives</strong>. Morning: warm amber dawn gradients, birds (simple SVG paths), soft noise. Noon: pale blue sky, sharp shadows on cards. Evening: golden hour glows. Night: deep navy, stars that pulse slowly, your accent color glows like moonlight. Spline handles the sky background layer.
+      </p>
+      <p class="concept-desc">
+        The greeting in your hero changes: "Good morning" / "Good afternoon" / "It's a quiet evening—" before your name. Every visitor gets a different first impression. Time is pulled from <code>new Date()</code>. No API needed. Uses PatternCraft star pattern at night, radial gradient overlays for dawn/dusk.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Dynamic bg</div><div class="mechanic-value">6 time-based CSS states</div></div>
+        <div class="mechanic"><div class="mechanic-label">Sky</div><div class="mechanic-value">Spline 3D background layer</div></div>
+        <div class="mechanic"><div class="mechanic-label">Greeting</div><div class="mechanic-value">JS Date() → dynamic copy</div></div>
+        <div class="mechanic"><div class="mechanic-label">Stars</div><div class="mechanic-value">PatternCraft dot pattern + CSS anim</div></div>
+        <div class="mechanic"><div class="mechanic-label">Texture</div><div class="mechanic-value">Radial gradient overlays per state</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~5–6 days solo</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 4 -->
+    <div class="concept-card c-blue">
+      <div class="concept-top">
+        <div class="concept-num">04</div>
+        <div class="concept-header">
+          <div class="concept-name">"Kinetic Matter"</div>
+          <div class="concept-tagline">Real Physics. Real Gravity.</div>
+        </div>
+        <div class="concept-badge">Jaw Drop</div>
+      </div>
+      <p class="concept-desc">
+        Your skills section has <strong>actual physics</strong>. Skill chips are rigid bodies that fall into the viewport from above when you scroll into the section. They collide, stack, settle — using Matter.js physics engine. The pile is different every visit. You can click and drag chips to scatter them. They bounce off each other and the "floor."
+      </p>
+      <p class="concept-desc">
+        The rest of the portfolio is clean, minimal, dark. This one section is the chaos that proves you build things other people don't think to build. Matter.js is 87KB. Worth every byte for the reaction it gets.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Physics</div><div class="mechanic-value">Matter.js rigid body simulation</div></div>
+        <div class="mechanic"><div class="mechanic-label">Trigger</div><div class="mechanic-value">GSAP ScrollTrigger → spawn bodies</div></div>
+        <div class="mechanic"><div class="mechanic-label">Interaction</div><div class="mechanic-value">Click + drag to scatter chips</div></div>
+        <div class="mechanic"><div class="mechanic-label">Rest of site</div><div class="mechanic-value">Minimal, clean, no physics elsewhere</div></div>
+        <div class="mechanic"><div class="mechanic-label">Texture</div><div class="mechanic-value">PatternCraft grid bg for physics canvas</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~3–4 days for physics section alone</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 5 -->
+    <div class="concept-card c-orange">
+      <div class="concept-top">
+        <div class="concept-num">05</div>
+        <div class="concept-header">
+          <div class="concept-name">"Refraction"</div>
+          <div class="concept-tagline">True Glass Distortion</div>
+        </div>
+        <div class="concept-badge">Optical Illusion</div>
+      </div>
+      <p class="concept-desc">
+        Not basic glassmorphism. <strong>True optical refraction</strong>. SVG <code>feTurbulence</code> + <code>feDisplacementMap</code> filters make content behind your project cards appear bent and distorted, like looking through real curved glass. The distortion intensity varies with mouse proximity. Cards feel physically real.
+      </p>
+      <p class="concept-desc">
+        A PatternCraft geometric grid runs behind all cards at 100% opacity. The glass distortion makes the grid warp around card edges, creating genuine optical depth. This is pure CSS + SVG filters — zero canvas, zero WebGL.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Core</div><div class="mechanic-value">SVG feTurbulence + feDisplacementMap</div></div>
+        <div class="mechanic"><div class="mechanic-label">Mouse</div><div class="mechanic-value">JS proximity → filter intensity</div></div>
+        <div class="mechanic"><div class="mechanic-label">Background</div><div class="mechanic-value">PatternCraft geometric grid</div></div>
+        <div class="mechanic"><div class="mechanic-label">Cards</div><div class="mechanic-value">21st.dev glass card components</div></div>
+        <div class="mechanic"><div class="mechanic-label">Icons</div><div class="mechanic-value">Lucide Animated on hover</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~4–5 days</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 6 -->
+    <div class="concept-card c-pink">
+      <div class="concept-top">
+        <div class="concept-num">06</div>
+        <div class="concept-header">
+          <div class="concept-name">"The Manifesto"</div>
+          <div class="concept-tagline">Editorial Long-Form Portfolio</div>
+        </div>
+        <div class="concept-badge">Storytelling</div>
+      </div>
+      <p class="concept-desc">
+        Your portfolio is a <strong>single-column editorial essay</strong>. It reads like a design magazine feature on you. No sections — just flow. "I am a developer because I refuse to accept that software is ugly." Big pull quotes. Projects embedded mid-text like magazine spreads. Skills shown as a flowing tag cloud inline with prose.
+      </p>
+      <p class="concept-desc">
+        Typography-first. Variable font headings that animate as you scroll. Every word carries weight. Animate UI's text effects reveal each paragraph. This takes courage — it's the opposite of a typical portfolio — and interviewers remember exactly that.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Layout</div><div class="mechanic-value">Single column, editorial prose</div></div>
+        <div class="mechanic"><div class="mechanic-label">Typography</div><div class="mechanic-value">Variable font + Animate UI reveals</div></div>
+        <div class="mechanic"><div class="mechanic-label">Projects</div><div class="mechanic-value">Inline embeds, magazine spreads</div></div>
+        <div class="mechanic"><div class="mechanic-label">Texture</div><div class="mechanic-value">Subtle grain overlay CSS</div></div>
+        <div class="mechanic"><div class="mechanic-label">Scroll</div><div class="mechanic-value">Lenis ultra-smooth, reading pace</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~3–4 days (content-heavy)</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 7 -->
+    <div class="concept-card c-red">
+      <div class="concept-top">
+        <div class="concept-num">07</div>
+        <div class="concept-header">
+          <div class="concept-name">"Void"</div>
+          <div class="concept-tagline">The Spotlight Portfolio</div>
+        </div>
+        <div class="concept-badge">Tension & Drama</div>
+      </div>
+      <p class="concept-desc">
+        The page is <strong>completely dark</strong>. Your cursor is a spotlight. Everything exists in darkness until illuminated. Hovering your name reveals it. Moving to a project reveals its card. Moving away plunges it back into darkness. The entire content is always there — but the visitor must discover it.
+      </p>
+      <p class="concept-desc">
+        Built with a CSS <code>radial-gradient</code> mask that tracks cursor position via <code>--x</code> and <code>--y</code> CSS custom properties. Zero JavaScript for the core effect. GSAP animates the spotlight radius on hover of key elements (expanding to reveal more context). PatternCraft circuit board pattern beneath, revealed by the spotlight.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Core</div><div class="mechanic-value">CSS radial-gradient mask + custom props</div></div>
+        <div class="mechanic"><div class="mechanic-label">Tracking</div><div class="mechanic-value">mousemove → CSS --x, --y vars</div></div>
+        <div class="mechanic"><div class="mechanic-label">Background</div><div class="mechanic-value">PatternCraft circuit board</div></div>
+        <div class="mechanic"><div class="mechanic-label">Hover</div><div class="mechanic-value">GSAP expands spotlight radius</div></div>
+        <div class="mechanic"><div class="mechanic-label">Mobile</div><div class="mechanic-value">Full reveal mode (no cursor on touch)</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~3–4 days</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 8 -->
+    <div class="concept-card c-gold">
+      <div class="concept-top">
+        <div class="concept-num">08</div>
+        <div class="concept-header">
+          <div class="concept-name">"Live Canvas"</div>
+          <div class="concept-tagline">Your GitHub Activity as Art</div>
+        </div>
+        <div class="concept-badge">Data-Driven</div>
+      </div>
+      <p class="concept-desc">
+        The hero background is a <strong>live visualization of your GitHub commit activity</strong>. Each commit is a particle. Active weeks pulse bright. Quiet weeks are dim. The pattern is uniquely yours — no two developers have the same shape. It updates every time someone visits.
+      </p>
+      <p class="concept-desc">
+        Fetched from GitHub's public contribution API, rendered on a Canvas element with requestAnimationFrame. Particles slowly drift and breathe. Your name floats over it. This says: "I ship code constantly, and even my decorative background proves it."
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Data</div><div class="mechanic-value">GitHub contributions API (public)</div></div>
+        <div class="mechanic"><div class="mechanic-label">Render</div><div class="mechanic-value">Canvas + requestAnimationFrame</div></div>
+        <div class="mechanic"><div class="mechanic-label">Particles</div><div class="mechanic-value">Commit count → particle brightness</div></div>
+        <div class="mechanic"><div class="mechanic-label">Fallback</div><div class="mechanic-value">PatternCraft dot grid if API slow</div></div>
+        <div class="mechanic"><div class="mechanic-label">Icons</div><div class="mechanic-value">Lucide Animated GitHub icon</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~4–5 days</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 9 -->
+    <div class="concept-card c-teal">
+      <div class="concept-top">
+        <div class="concept-num">09</div>
+        <div class="concept-header">
+          <div class="concept-name">"Breath"</div>
+          <div class="concept-tagline">Ambient Organism</div>
+        </div>
+        <div class="concept-badge">Calm Luxury</div>
+      </div>
+      <p class="concept-desc">
+        Every element on the page <strong>breathes</strong>. Slow, synchronized, rhythmic. Your name gently scales 1.000 → 1.003 → 1.000 over 4 seconds. The background gradient slowly rotates. Cards subtly rise and fall. There's no scroll animation at all — just presence. Everything is alive at rest.
+      </p>
+      <p class="concept-desc">
+        The design is ultra-luxury dark: deep navy/black, a single warm accent, generous white space, perfect type. The breathing animations are handled with CSS <code>@keyframes</code> only — no JavaScript needed for the ambient motion. GSAP is used exclusively for entrance sequences and the project showcase.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Ambient</div><div class="mechanic-value">CSS @keyframes, 4–8s cycles</div></div>
+        <div class="mechanic"><div class="mechanic-label">Design</div><div class="mechanic-value">Ultra-luxury dark, one warm accent</div></div>
+        <div class="mechanic"><div class="mechanic-label">Typography</div><div class="mechanic-value">Large, generous, editorial</div></div>
+        <div class="mechanic"><div class="mechanic-label">Projects</div><div class="mechanic-value">Horizontal scroll, GSAP pin</div></div>
+        <div class="mechanic"><div class="mechanic-label">Icons</div><div class="mechanic-value">Lucide Animated, slow entrance</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~4–5 days</div></div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 10 -->
+    <div class="concept-card c-violet">
+      <div class="concept-top">
+        <div class="concept-num">10</div>
+        <div class="concept-header">
+          <div class="concept-name">"Sequence"</div>
+          <div class="concept-tagline">Frame-by-Frame Scroll Cinema</div>
+        </div>
+        <div class="concept-badge">Cinematic</div>
+      </div>
+      <p class="concept-desc">
+        The entire portfolio is a <strong>scroll-controlled animation sequence</strong>. Each pixel of scroll = one frame of progress. The intro: your name draws from nothing (SVG path animation). Then your photo fades in from pure white. Then the scene reveals to show you at a desk, projects flying in from the sides. This is a GSAP timeline pinned to scroll — the user literally scrubs the animation.
+      </p>
+      <p class="concept-desc">
+        Projects are "scenes" in the animation. The viewer controls the playhead with their scroll. Uses GSAP's <code>scrub: true</code> on a single master timeline. Requires careful storyboarding before coding. The most impressive concept on this list when executed well.
+      </p>
+      <div class="concept-mechanics">
+        <div class="mechanic"><div class="mechanic-label">Core</div><div class="mechanic-value">GSAP master timeline + scrub: true</div></div>
+        <div class="mechanic"><div class="mechanic-label">Intro</div><div class="mechanic-value">SVG name path draw animation</div></div>
+        <div class="mechanic"><div class="mechanic-label">Scenes</div><div class="mechanic-value">Each project = pinned scroll scene</div></div>
+        <div class="mechanic"><div class="mechanic-label">Controls</div><div class="mechanic-value">Scroll = playhead scrub</div></div>
+        <div class="mechanic"><div class="mechanic-label">Transition</div><div class="mechanic-value">Animate UI for scene transitions</div></div>
+        <div class="mechanic"><div class="mechanic-label">Buildable</div><div class="mechanic-value">~7–10 days solo</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout">
+    <strong>My recommendation for you:</strong> Build Concept 01 "Signal" as your primary, and borrow the physics skills section from Concept 04 "Kinetic Matter" as a standalone section. Signal is rare, performant, beautiful, and the physics skills section will be the most screenshot-worthy moment on your entire portfolio.
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ═══════════════ CHAPTER 2: TECH STACK ═══════════════ -->
+  <div class="chapter" id="stack">
+    <div class="chapter-num">02 — Architecture</div>
+    <h2 class="chapter-title">The Complete Tech Stack</h2>
+    <p class="chapter-intro">Every layer of your portfolio, from foundation to deployment. No ambiguity — this is exactly what you install and why.</p>
+  </div>
+
+  <div class="stack-diagram">
+    <div class="stack-layer">
+      <div class="stack-label">Foundation</div>
+      <div class="stack-items">
+        <span class="stack-chip core">React 18</span>
+        <span class="stack-chip core">Vite 5</span>
+        <span class="stack-chip core">TypeScript</span>
+        <span class="stack-chip core">TailwindCSS v3</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="stack-label">Component Reg</div>
+      <div class="stack-items">
+        <span class="stack-chip ui">shadcn/ui</span>
+        <span class="stack-chip ui">21st.dev registry</span>
+        <span class="stack-chip ui">Animate UI</span>
+        <span class="stack-chip ui">Lucide Animated</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="stack-label">Animation</div>
+      <div class="stack-items">
+        <span class="stack-chip anim">GSAP 3</span>
+        <span class="stack-chip anim">@gsap/ScrollTrigger</span>
+        <span class="stack-chip anim">Lenis</span>
+        <span class="stack-chip anim">Anime.js</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="stack-label">Visual FX</div>
+      <div class="stack-items">
+        <span class="stack-chip tool">simplex-noise</span>
+        <span class="stack-chip tool">Spline (hero only)</span>
+        <span class="stack-chip tool">PatternCraft CSS</span>
+        <span class="stack-chip tool">Matter.js (skills)</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="stack-label">UX Polish</div>
+      <div class="stack-items">
+        <span class="stack-chip ui">Floating UI</span>
+        <span class="stack-chip ui">SweetAlert2</span>
+        <span class="stack-chip ui">Luxon</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="stack-label">SEO & Perf</div>
+      <div class="stack-items">
+        <span class="stack-chip tool">React Helmet Async</span>
+        <span class="stack-chip tool">React Lazy + Suspense</span>
+        <span class="stack-chip tool">sharp (image opt)</span>
+        <span class="stack-chip tool">vite-plugin-compression</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="stack-label">Deploy</div>
+      <div class="stack-items">
+        <span class="stack-chip deploy">Vercel</span>
+        <span class="stack-chip deploy">GitHub Actions CI</span>
+        <span class="stack-chip deploy">Vercel Analytics</span>
+        <span class="stack-chip deploy">Custom Domain</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">Setup Command Sequence</h3>
+    <div class="code-block"><span class="cm"># 1. Scaffold</span>
+<span class="kw">npm</span> create vite@latest my-portfolio -- --template react-ts
+<span class="kw">cd</span> my-portfolio
+
+<span class="cm"># 2. Core dependencies</span>
+<span class="kw">npm</span> install -D tailwindcss postcss autoprefixer
+<span class="kw">npm</span> install gsap @studio-freight/lenis animejs matter-js
+<span class="kw">npm</span> install simplex-noise @splinetool/react-spline
+<span class="kw">npm</span> install @floating-ui/react sweetalert2 luxon
+<span class="kw">npm</span> install react-helmet-async
+<span class="kw">npm</span> install -D vite-plugin-compression
+
+<span class="cm"># 3. Component registries</span>
+<span class="kw">npx</span> shadcn-ui@latest init
+
+<span class="cm"># 4. Install from 21st.dev (examples — browse for more)</span>
+<span class="kw">npx</span> shadcn@latest add <span class="str">"https://21st.dev/r/ilyauts/dock"</span>
+<span class="kw">npx</span> shadcn@latest add <span class="str">"https://21st.dev/r/serafimcloud/spotlight-card"</span>
+<span class="kw">npx</span> shadcn@latest add <span class="str">"https://21st.dev/r/aceternity/card-hover-effect"</span>
+
+<span class="cm"># 5. Animate UI (follow their docs for npx install command)</span>
+<span class="cm"># Visit: animate-ui.com → copy npx command per component</span>
+
+<span class="cm"># 6. Lucide Animated</span>
+<span class="kw">npm</span> install lucide-animated</div>
+  </div>
+
+  <div class="callout info">
+    <strong>PatternCraft usage:</strong> Go to patterncraft.fun, find your pattern (recommend "Diagonal Cross Center Fade Grid" for hero, "Circuit Board" for skills section), click copy — you get pure CSS or Tailwind classes. Paste directly into your component's className or style tag. Zero install required.
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ═══════════════ CHAPTER 3: SECTIONS ═══════════════ -->
+  <div class="chapter" id="sections">
+    <div class="chapter-num">03 — Page Architecture</div>
+    <h2 class="chapter-title">Every Section Designed With Intent</h2>
+    <p class="chapter-intro">Six sections. Each one has a single job. Every animation, interaction, and component serves that job — nothing decorative for its own sake.</p>
+  </div>
+
+  <div class="section-map">
+    <div class="section-row">
+      <div class="section-idx">01</div>
+      <div class="section-name">
+        <strong>Hero</strong>
+        <span>First impression</span>
+      </div>
+      <div class="section-details">
+        <span class="detail-chip">Signal noise field bg</span>
+        <span class="detail-chip">Spline 3D layer</span>
+        <span class="detail-chip">Animate UI text reveal</span>
+        <span class="detail-chip">Magnetic CTA button</span>
+        <span class="detail-chip">Custom cursor</span>
+        <span class="detail-chip">PatternCraft dot overlay</span>
+        <span class="detail-chip">Lucide scroll indicator</span>
+        <span class="detail-chip">Live "open to work" status pill</span>
+      </div>
+    </div>
+    <div class="section-row">
+      <div class="section-idx">02</div>
+      <div class="section-name">
+        <strong>About</strong>
+        <span>Personality + proof</span>
+      </div>
+      <div class="section-details">
+        <span class="detail-chip">Word-by-word GSAP reveal</span>
+        <span class="detail-chip">Frosted glass card</span>
+        <span class="detail-chip">Parallax avatar</span>
+        <span class="detail-chip">Animate UI number counters</span>
+        <span class="detail-chip">Social links w/ Lucide Animated</span>
+        <span class="detail-chip">"Currently building" live tag</span>
+      </div>
+    </div>
+    <div class="section-row">
+      <div class="section-idx">03</div>
+      <div class="section-name">
+        <strong>Projects</strong>
+        <span>The work</span>
+      </div>
+      <div class="section-details">
+        <span class="detail-chip">Horizontal GSAP pin scroll</span>
+        <span class="detail-chip">3D card tilt (no library)</span>
+        <span class="detail-chip">Video preview on hover</span>
+        <span class="detail-chip">21st.dev spotlight cards</span>
+        <span class="detail-chip">Full-screen overlay case study</span>
+        <span class="detail-chip">Tech stack Lucide Animated icons</span>
+      </div>
+    </div>
+    <div class="section-row">
+      <div class="section-idx">04</div>
+      <div class="section-name">
+        <strong>Skills</strong>
+        <span>Not a boring grid</span>
+      </div>
+      <div class="section-details">
+        <span class="detail-chip">Matter.js physics drop</span>
+        <span class="detail-chip">PatternCraft grid bg</span>
+        <span class="detail-chip">Draggable chip interaction</span>
+        <span class="detail-chip">Click chip → detail tooltip</span>
+        <span class="detail-chip">Floating UI popover</span>
+        <span class="detail-chip">Scroll to spawn chips</span>
+      </div>
+    </div>
+    <div class="section-row">
+      <div class="section-idx">05</div>
+      <div class="section-name">
+        <strong>Experience</strong>
+        <span>Story & growth</span>
+      </div>
+      <div class="section-details">
+        <span class="detail-chip">SVG path draw (GSAP + scroll)</span>
+        <span class="detail-chip">Alt left/right card entrance</span>
+        <span class="detail-chip">Animate UI timeline component</span>
+        <span class="detail-chip">Luxon date formatting</span>
+        <span class="detail-chip">Stack icon chips per role</span>
+        <span class="detail-chip">Scroll-activated dot fill</span>
+      </div>
+    </div>
+    <div class="section-row">
+      <div class="section-idx">06</div>
+      <div class="section-name">
+        <strong>Contact</strong>
+        <span>Open the door</span>
+      </div>
+      <div class="section-details">
+        <span class="detail-chip">Dark contrast section</span>
+        <span class="detail-chip">Anime.js focus underline</span>
+        <span class="detail-chip">Floating UI social tooltips</span>
+        <span class="detail-chip">SweetAlert2 success modal</span>
+        <span class="detail-chip">Lucide Animated send icon</span>
+        <span class="detail-chip">Availability status chip</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ═══════════════ CHAPTER 4: ANIMATIONS ═══════════════ -->
+  <div class="chapter" id="animations">
+    <div class="chapter-num">04 — Animation System</div>
+    <h2 class="chapter-title">Which Library. Which Moment. Why.</h2>
+    <p class="chapter-intro">Every animation in your portfolio has a designated tool. This table is your reference — when you're building a component and need to animate something, look here first.</p>
+  </div>
+
+  <table class="anim-table">
+    <thead>
+      <tr>
+        <th>What to Animate</th>
+        <th>Use This</th>
+        <th>Reason</th>
+        <th>Key Config</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Scroll position reading</td><td>Lenis</td><td>Smooth values for all scroll-based triggers</td><td>duration: 1.2, easing: expo</td></tr>
+      <tr><td>Section entrance reveals</td><td>GSAP ScrollTrigger</td><td>Precise start/end control, scrub support</td><td>start: "top 80%", toggleActions</td></tr>
+      <tr><td>Horizontal project scroll</td><td>GSAP ScrollTrigger</td><td>Pin + scrub is GSAP's signature feature</td><td>pin: true, scrub: 1</td></tr>
+      <tr><td>SVG timeline path draw</td><td>GSAP ScrollTrigger</td><td>stroke-dashoffset tween driven by scroll</td><td>scrub: true, from dashOffset</td></tr>
+      <tr><td>Page load intro sequence</td><td>GSAP Timeline</td><td>Chained, precise timing with addLabel()</td><td>gsap.timeline() on mount</td></tr>
+      <tr><td>Text word-by-word reveal</td><td>Animate UI</td><td>Pre-built, polished, saves 2 hours</td><td>AnimatedText component</td></tr>
+      <tr><td>Number counters (stats)</td><td>Animate UI</td><td>Pre-built animated counter component</td><td>NumberCounter + ScrollTrigger hook</td></tr>
+      <tr><td>Skills physics drop</td><td>Matter.js</td><td>Only physics engine for rigid bodies</td><td>Engine.run() + Render + Bodies</td></tr>
+      <tr><td>Noise field background</td><td>Canvas + simplex-noise</td><td>requestAnimationFrame loop, no library</td><td>scroll velocity → noise frequency</td></tr>
+      <tr><td>Icon micro-animations</td><td>Lucide Animated</td><td>Drop-in animated SVG icons</td><td>trigger="hover", size={24}</td></tr>
+      <tr><td>Form field focus effect</td><td>Anime.js</td><td>Lightweight for isolated CSS property tween</td><td>borderBottom from 0 to 100%</td></tr>
+      <tr><td>Skill tooltip popover</td><td>Floating UI</td><td>Viewport-aware auto-positioning</td><td>useFloating + autoPlacement</td></tr>
+      <tr><td>Contact form success</td><td>SweetAlert2</td><td>Custom dark-themed modal, one line</td><td>Swal.fire({background: '#0a0a0a'})</td></tr>
+      <tr><td>Card 3D tilt</td><td>Vanilla JS</td><td>mousemove → perspective rotateXY, no lib</td><td>requestAnimationFrame lerp</td></tr>
+      <tr><td>Custom cursor</td><td>Vanilla JS RAF</td><td>Lerp-smoothed position, two elements</td><td>lerp(current, target, 0.15)</td></tr>
+      <tr><td>Magnetic CTA button</td><td>Vanilla JS</td><td>Proximity detection + translate, no lib</td><td>distance check + translateX/Y</td></tr>
+      <tr><td>Page transitions</td><td>Animate UI</td><td>Pre-built fade/slide transitions</td><td>PageTransition wrapper component</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section">
+    <h3 class="section-title">Lenis + GSAP Integration (Critical Setup)</h3>
+    <div class="code-block"><span class="cm">// hooks/useSmoothScroll.ts — run this ONCE at app root</span>
+<span class="kw">import</span> Lenis <span class="kw">from</span> <span class="str">'@studio-freight/lenis'</span>
+<span class="kw">import</span> { ScrollTrigger } <span class="kw">from</span> <span class="str">'gsap/ScrollTrigger'</span>
+<span class="kw">import</span> { gsap } <span class="kw">from</span> <span class="str">'gsap'</span>
+
+gsap.<span class="fn">registerPlugin</span>(ScrollTrigger)
+
+<span class="kw">export function</span> <span class="fn">useSmoothScroll</span>() {
+  <span class="kw">useEffect</span>(() => {
+    <span class="kw">const</span> lenis = <span class="kw">new</span> <span class="fn">Lenis</span>({
+      duration: <span class="num">1.2</span>,
+      easing: (t) => Math.<span class="fn">min</span>(<span class="num">1</span>, <span class="num">1.001</span> - Math.<span class="fn">pow</span>(<span class="num">2</span>, -<span class="num">10</span> * t)),
+      orientation: <span class="str">'vertical'</span>,
+      smoothWheel: <span class="kw">true</span>,
+    })
+
+    <span class="cm">// Wire Lenis scroll values into GSAP's ScrollTrigger</span>
+    lenis.<span class="fn">on</span>(<span class="str">'scroll'</span>, ScrollTrigger.update)
+    gsap.ticker.<span class="fn">add</span>((time) => lenis.<span class="fn">raf</span>(time * <span class="num">1000</span>))
+    gsap.ticker.<span class="fn">lagSmoothing</span>(<span class="num">0</span>)
+
+    <span class="kw">return</span> () => { lenis.<span class="fn">destroy</span>() }
+  }, [])
+}</div>
+  </div>
+
+  <div class="section">
+    <h3 class="section-title">Performance Rules (Non-Negotiable)</h3>
+    <div class="section-body">
+      <p>Animate ONLY <code>transform</code> and <code>opacity</code>. Never <code>width</code>, <code>height</code>, <code>top</code>, <code>left</code>, or <code>margin</code> — these trigger layout reflow and cause jank. If you need to move something, use <code>translateX</code>/<code>translateY</code>. Always.</p>
+      <p>Add <code>will-change: transform</code> to elements that will animate — but only immediately before they animate. Remove it after via <code>onComplete</code>. Adding it to every element destroys the optimization.</p>
+      <p>Use <code>gsap.matchMedia()</code> to disable scroll animations on mobile entirely. They rarely feel right on touch devices and kill battery. On mobile, show everything static. The site should still look great — just without animations.</p>
+      <p>Kill every ScrollTrigger in its React <code>useEffect</code> cleanup: <code>return () => ctx.revert()</code>. Memory leaks from GSAP contexts are the most common bug in React + GSAP portfolios.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ═══════════════ CHAPTER 5: BUILD PLAN ═══════════════ -->
+  <div class="chapter" id="build">
+    <div class="chapter-num">05 — Execution</div>
+    <h2 class="chapter-title">The 8-Day Build Plan</h2>
+    <p class="chapter-intro">A real schedule for building this as a 3rd-year CSE student who has other things going on. Realistic deadlines, no fantasy timelines.</p>
+  </div>
+
+  <div class="roadmap">
+    <div class="roadmap-step">
+      <div class="step-num">D1</div>
+      <div class="step-content">
+        <div class="step-title">Foundation + Design System <span>Day 1</span></div>
+        <div class="step-desc">Install everything. Set up your color palette in Tinte.dev first — export the CSS variables. Define all fonts, spacing tokens, and color tokens in <code>globals.css</code> before writing a single component. This prevents inconsistency later.</div>
+        <div class="step-tasks">
+          <span class="step-task">npm scaffold + all installs</span>
+          <span class="step-task">Tinte.dev palette → CSS vars</span>
+          <span class="step-task">Font imports (Syne + DM Sans)</span>
+          <span class="step-task">tailwind.config.ts extend</span>
+          <span class="step-task">Component folder structure</span>
+          <span class="step-task">Lenis + GSAP hook setup</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-step">
+      <div class="step-num">D2</div>
+      <div class="step-content">
+        <div class="step-title">Noise Field Background + Hero Shell <span>Day 2</span></div>
+        <div class="step-desc">Build the signal noise field first — it's the hardest and most critical piece. Get the Canvas working with simplex noise, make it react to scroll velocity, then build the hero content on top of it. Don't touch animations yet — just get the layout right.</div>
+        <div class="step-tasks">
+          <span class="step-task">Canvas noise field component</span>
+          <span class="step-task">Scroll velocity detection</span>
+          <span class="step-task">Noise amplitude reactivity</span>
+          <span class="step-task">Hero layout (name, tagline, CTA)</span>
+          <span class="step-task">PatternCraft overlay layer</span>
+          <span class="step-task">Spline 3D embed (lazy)</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-step">
+      <div class="step-num">D3</div>
+      <div class="step-content">
+        <div class="step-title">All Section Layouts (No Animations Yet) <span>Day 3</span></div>
+        <div class="step-desc">Build every section in static HTML/JSX. About, Projects (grid layout), Skills (just chips in a div), Experience (vertical list), Contact (form). Add your REAL content. Make sure it looks good at 1440px and 768px with zero animations. This is your safety net.</div>
+        <div class="step-tasks">
+          <span class="step-task">About section</span>
+          <span class="step-task">Projects grid (static)</span>
+          <span class="step-task">Skills chip layout</span>
+          <span class="step-task">Experience vertical list</span>
+          <span class="step-task">Contact form</span>
+          <span class="step-task">Mobile responsive pass</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-step">
+      <div class="step-num">D4</div>
+      <div class="step-content">
+        <div class="step-title">21st.dev + Animate UI Integration <span>Day 4</span></div>
+        <div class="step-desc">Install and customize your 21st.dev components (dock nav, spotlight cards, hover effects). Add Animate UI text reveals to hero and About. Swap static icons for Lucide Animated. This day transforms the site from "looks okay" to "premium."</div>
+        <div class="step-tasks">
+          <span class="step-task">21st.dev dock navigation</span>
+          <span class="step-task">21st.dev spotlight project cards</span>
+          <span class="step-task">Animate UI hero text reveal</span>
+          <span class="step-task">Animate UI number counters</span>
+          <span class="step-task">Lucide Animated throughout</span>
+          <span class="step-task">Custom cursor implementation</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-step">
+      <div class="step-num">D5</div>
+      <div class="step-content">
+        <div class="step-title">GSAP Scroll Animations <span>Day 5</span></div>
+        <div class="step-desc">Now add all scroll-triggered animations. Work section by section: hero entrance → About word reveal → Projects horizontal pin → Experience SVG draw. Test each one before moving on. Use <code>markers: true</code> in ScrollTrigger during development.</div>
+        <div class="step-tasks">
+          <span class="step-task">Hero GSAP entrance timeline</span>
+          <span class="step-task">About word-by-word reveal</span>
+          <span class="step-task">Projects horizontal scroll pin</span>
+          <span class="step-task">Experience SVG path draw</span>
+          <span class="step-task">Section entrance reveals</span>
+          <span class="step-task">ScrollTrigger cleanup in useEffect</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-step">
+      <div class="step-num">D6</div>
+      <div class="step-content">
+        <div class="step-title">Matter.js Skills Physics + Interactions <span>Day 6</span></div>
+        <div class="step-desc">Build the physics skills section. This is isolated enough to not affect anything else. Then add magnetic CTA, 3D card tilt, Anime.js form effects, Floating UI tooltips, and SweetAlert2 contact success.</div>
+        <div class="step-tasks">
+          <span class="step-task">Matter.js physics world setup</span>
+          <span class="step-task">Skill chip rigid bodies</span>
+          <span class="step-task">Scroll → spawn trigger</span>
+          <span class="step-task">Drag interaction</span>
+          <span class="step-task">Magnetic CTA button</span>
+          <span class="step-task">Floating UI skill tooltips</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-step">
+      <div class="step-num">D7</div>
+      <div class="step-content">
+        <div class="step-title">Polish, Accessibility + Mobile <span>Day 7</span></div>
+        <div class="step-desc">The detail pass. Navbar hide/show on scroll. Prefers-reduced-motion wrappers. Add all <code>aria-label</code>s. Fix everything on 375px iPhone. Add loading states for Spline. Test in Chrome, Firefox, Safari. Fix whatever breaks in Safari (it always does).</div>
+        <div class="step-tasks">
+          <span class="step-task">gsap.matchMedia() mobile disable</span>
+          <span class="step-task">prefers-reduced-motion</span>
+          <span class="step-task">aria-label all icon buttons</span>
+          <span class="step-task">Navbar scroll hide/show</span>
+          <span class="step-task">375px + 768px fix pass</span>
+          <span class="step-task">Safari fixes</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-step">
+      <div class="step-num">D8</div>
+      <div class="step-content">
+        <div class="step-title">SEO, Optimization + Deploy <span>Day 8</span></div>
+        <div class="step-desc">All meta tags. Sitemap. OG image. Compress all images to WebP. React.lazy() every section below fold. Run Lighthouse — target 90+ Performance. Deploy to Vercel. Connect custom domain. Submit to Google Search Console. Done.</div>
+        <div class="step-tasks">
+          <span class="step-task">All SEO meta tags</span>
+          <span class="step-task">OG image 1200×630px</span>
+          <span class="step-task">sitemap.xml + robots.txt</span>
+          <span class="step-task">React.lazy() code split</span>
+          <span class="step-task">WebP image conversion</span>
+          <span class="step-task">Vercel deploy + domain</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ═══════════════ CHAPTER 6: PROMPTS ═══════════════ -->
+  <div class="chapter" id="prompts">
+    <div class="chapter-num">06 — Antigravity Prompts</div>
+    <h2 class="chapter-title">Copy. Paste. Build.</h2>
+    <p class="chapter-intro">Eight exact prompts, each scoped tightly to a single component or system. Every prompt references the skills Antigravity should activate first.</p>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt 1 — Project Foundation</span>
+      <span class="prompt-skill">Skills: vercel-react-best-practices · frontend-design</span>
+    </div>
+    <div class="prompt-text"><span class="k">Activate skills:</span> <span class="v">vercel-react-best-practices</span>, <span class="v">frontend-design</span>
+
+Set up a React 18 + Vite 5 + TypeScript portfolio project with:
+- TailwindCSS v3 with custom CSS variables: --bg (#080808), --surface (#101010), --text (#f0ede8), --accent (#d4f57a), --muted (#888888)
+- shadcn/ui initialized
+- Fonts: Syne (display, 700/800) + DM Sans (body, 300/400) via Fontsource
+- Lenis smooth scroll wired to GSAP ScrollTrigger in a custom useSmoothScroll hook
+- Folder structure: /components/sections, /components/ui, /hooks, /lib, /assets
+- A GlobalCursor component: 12px circle + 4px dot, both following cursor with different lerp speeds (0.15 and 0.08), using requestAnimationFrame
+- vite-plugin-compression installed and configured
+- React.lazy() + Suspense wrapper on App.tsx ready for all below-fold sections</div>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt 2 — Signal Noise Field Background</span>
+      <span class="prompt-skill">Skills: frontend-design · ui-ux-pro-max</span>
+    </div>
+    <div class="prompt-text"><span class="k">Activate skills:</span> <span class="v">frontend-design</span>, <span class="v">ui-ux-pro-max</span>
+
+Build a NoiseField React component (full-viewport canvas background):
+- Uses simplex-noise library to generate a 2D noise field on a canvas element
+- Renders noise as colored pixels: dark base (#080808) shifting to accent (#d4f57a at 5% opacity) based on noise value
+- Scroll velocity detection: track window scrollY delta per frame, clamp to 0–100px/frame
+- Map scroll velocity → noise frequency: slow scroll = 0.003 frequency (calm), fast scroll = 0.008 (turbulent)
+- Animate noise offset over time with requestAnimationFrame (time-based drift at 0.0005 per frame)
+- Canvas position: fixed, full viewport, z-index -1
+- Overlay: a PatternCraft "Top Fade Grid" CSS pattern at 4% opacity as a second fixed div
+- Performance: use a smaller canvas (50% resolution) and CSS scale(2) for 2x perf
+- useEffect cleanup: cancelAnimationFrame on unmount
+- Export as default, lazy-loadable component</div>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt 3 — Hero Section</span>
+      <span class="prompt-skill">Skills: frontend-design · ui-ux-pro-max</span>
+    </div>
+    <div class="prompt-text"><span class="k">Activate skills:</span> <span class="v">frontend-design</span>, <span class="v">ui-ux-pro-max</span>
+
+Build a Hero React component:
+- Full viewport height (100svh), transparent background (noise field shows through)
+- A Spline 3D scene embed (@splinetool/react-spline), lazy loaded, positioned as absolute background behind content, z-index 0. Show a CSS gradient placeholder while loading.
+- Content layer: centered, z-index 1
+- "Available for opportunities" status pill: green pulsing dot + text, from 21st.dev or custom
+- Name in Syne 800 font, 80px desktop / 48px mobile, --text color
+- Tagline in DM Sans 300, 22px, --muted color
+- GSAP timeline on mount: status pill (y:20 opacity:0 → default, delay 0.3s), name (y:40 opacity:0 → default, delay 0.6s, stagger each word), tagline (y:20 opacity:0 → default, delay 0.9s), CTA (scale:0.9 opacity:0 → default, delay 1.1s)
+- CTA button: magnetic effect — on mousemove, if cursor within 80px, button translates 30% of distance toward cursor. Reset on mouseleave with spring ease.
+- Scroll indicator: arrow-down Lucide Animated icon, CSS bounce animation
+- PatternCraft "Bottom Fade Grid" overlay at 5% in bottom half of hero only</div>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt 4 — Matter.js Physics Skills Section</span>
+      <span class="prompt-skill">Skills: frontend-design · ui-ux-pro-max</span>
+    </div>
+    <div class="prompt-text"><span class="k">Activate skills:</span> <span class="v">frontend-design</span>, <span class="v">ui-ux-pro-max</span>
+
+Build a PhysicsSkills React component using Matter.js:
+- A canvas-backed physics world, full section width, 500px height
+- PatternCraft "Left Masked Circuit Board" CSS pattern as the section background
+- On ScrollTrigger entering the section (start: "top 60%"): spawn skill chip bodies from random x positions at y:-50, falling into the physics world
+- Skills list: React, TypeScript, Node.js, Python, TailwindCSS, GSAP, MongoDB, PostgreSQL, Docker, Git, Figma, Next.js — each is a rounded rectangle body (label text inside)
+- Bodies styled: --surface fill, --border stroke, --text label, Syne font
+- Physics config: gravity 1.2, restitution 0.3 (slightly bouncy), friction 0.5
+- Floor and side walls as static bodies matching canvas edges
+- Mouse constraint: user can click and drag chips to scatter them (Matter.Mouse + MouseConstraint)
+- On chip hover (before mouse constraint drag): show Floating UI tooltip with "X years" or proficiency note
+- Responsive: on mobile, show a simple styled chip grid instead (physics disabled)</div>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt 5 — Projects Horizontal Showcase</span>
+      <span class="prompt-skill">Skills: frontend-design · ui-ux-pro-max</span>
+    </div>
+    <div class="prompt-text"><span class="k">Activate skills:</span> <span class="v">frontend-design</span>, <span class="v">ui-ux-pro-max</span>
+
+Build a Projects React component:
+- GSAP ScrollTrigger horizontal scroll section: pin the section, tween a horizontal container from x:0 to x:-(totalWidth - viewportWidth) as user scrolls vertically. scrub: 1
+- 4 featured project cards side by side, each 420px wide, 560px tall
+- Each card: project name (Syne 700 26px), category (DM Mono 11px muted), 2-line description, tech stack row, two buttons (GitHub + Live with Lucide Animated icons)
+- Card background: frosted glass (background: rgba(16,16,16,0.8), backdrop-filter: blur(20px))
+- Install 21st.dev spotlight card component and use as card wrapper
+- 3D tilt: on mousemove over card, calculate cursor position relative to card center, apply perspective(1000px) rotateX(max 8deg) rotateY(max 8deg) transform. Reset on mouseleave with 0.4s ease transition.
+- Video hover: each card has an &lt;video autoPlay muted loop playsInline&gt; that fades in (opacity 0→0.15) on card hover, showing a looping project screen capture
+- Below pinned section: a clean 2×N grid of remaining projects, standard cards
+- Full section scrollable count: show "01 / 04" counter that updates with scroll progress</div>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt 6 — Experience Timeline</span>
+      <span class="prompt-skill">Skills: frontend-design</span>
+    </div>
+    <div class="prompt-text"><span class="k">Activate skills:</span> <span class="v">frontend-design</span>
+
+Build an Experience React component:
+- Centered vertical layout, full section width
+- A single SVG vertical path (straight line) running center of the section, full height
+- GSAP ScrollTrigger: animate stroke-dashoffset from path total length to 0 as section scrolls into view. scrub: true. This draws the line as user scrolls.
+- 3–4 experience entries alternating left and right of the center line
+- Left entries: text right-aligned, card from x:-60 opacity:0 entering on scroll
+- Right entries: text left-aligned, card from x:60 opacity:0 entering on scroll
+- At each entry's position on the center line: a circle dot that fills with --accent color when that card's ScrollTrigger fires
+- Card content: company name (Syne 600 18px), role (DM Sans 500 15px), date range via Luxon (DM Mono 12px muted), 2-sentence description (DM Sans 300 14px muted), row of tech tag chips
+- Card style: --surface bg, 1px --border, border-radius 12px, padding 24px
+- Animate UI: use their timeline component if it matches, otherwise custom
+- Section header: "Where I've Been" in Syne 700 48px, left-aligned</div>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt 7 — Contact + Navbar Polish</span>
+      <span class="prompt-skill">Skills: frontend-design · ui-ux-pro-max</span>
+    </div>
+    <div class="prompt-text"><span class="k">Activate skills:</span> <span class="v">frontend-design</span>, <span class="v">ui-ux-pro-max</span>
+
+Build a Contact React component AND a Navbar component:
+
+CONTACT:
+- Dark contrast section (bg: #050505), padding 120px 0
+- Social links: GitHub, LinkedIn, Twitter, Email — each with Lucide Animated icons (trigger="hover") and Floating UI tooltip showing handle/address
+- A minimal form: Name, Email, Message — each input with Anime.js focus effect (a line animates in under active field using border-bottom from scaleX(0) to scaleX(1))
+- Submit button with Lucide Animated Send icon. On success: SweetAlert2 modal with dark theme (background: '#0a0a0a', color: '#f0ede8', confirmButtonColor: '#d4f57a')
+- Availability status: "Open to opportunities — Starting [month]" with a pulsing green dot
+
+NAVBAR:
+- Install 21st.dev dock navigation component
+- Fixed at bottom-center on desktop (dock style), top on mobile
+- Links: Home, About, Projects, Skills, Experience, Contact
+- Hide on scroll down, reveal on scroll up (track scrollY direction with GSAP onUpdate)
+- Active section highlight based on scroll position
+- Lucide Animated icons per nav item</div>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt 8 — SEO + Performance + Deploy</span>
+      <span class="prompt-skill">Skills: seo-audit · optimize · vercel-react-best-practices</span>
+    </div>
+    <div class="prompt-text"><span class="k">Activate skills:</span> <span class="v">seo-audit</span>, <span class="v">optimize</span>, <span class="v">vercel-react-best-practices</span>
+
+Optimize and deploy the portfolio:
+
+SEO:
+- Use react-helmet-async to add: title, meta description, og:title, og:description, og:image (1200×630), og:url, twitter:card, twitter:image, canonical URL to every page
+- Create public/sitemap.xml with homepage entry and lastmod today
+- Create public/robots.txt allowing all crawlers
+- All section headings use correct H1/H2/H3 hierarchy (only one H1: your name)
+- All icon buttons have aria-label. All img have descriptive alt text.
+
+PERFORMANCE:
+- Wrap all sections below Hero in React.lazy() + Suspense with a null fallback
+- Convert all images to .webp using sharp in a Vite build plugin
+- Add loading="lazy" decoding="async" and explicit width/height to all img tags
+- Wrap all GSAP code in gsap.matchMedia() to disable on (max-width: 768px)
+- Add prefers-reduced-motion check: if matches, disable all GSAP animations
+- vite.config: enable vite-plugin-compression for gzip + brotli
+- Confirm Spline loads lazily with React.lazy() — show gradient placeholder while loading
+
+DEPLOY:
+- vercel.json with headers for cache-control on /assets/**
+- Confirm Vercel Analytics is enabled
+- Add Open Graph image to /public/og-image.jpg (1200×630)</div>
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ═══════════════ CHAPTER 7: SEO ═══════════════ -->
+  <div class="chapter" id="seo">
+    <div class="chapter-num">07 — Visibility</div>
+    <h2 class="chapter-title">SEO + Performance Checklist</h2>
+    <p class="chapter-intro">A beautiful portfolio that nobody finds is a waste. These are the specific, high-impact moves — ranked by impact.</p>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Your name as H1</strong> — One H1, it's your name. Google uses this as the primary identifier of who the page is about.</div><div class="check-impact high">High</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Meta description under 160 chars</strong> — "Frontend developer + CSE student building [X]. Currently [project/internship]." Make it specific, not generic.</div><div class="check-impact high">High</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>OG image 1200×630px</strong> — This is the preview card when someone shares your link on LinkedIn, Twitter, WhatsApp. Design it: dark background, your name large, your role, your headshot.</div><div class="check-impact high">High</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Project titles in real text, not images</strong> — Your project names must be crawlable text (inside article + h3 tags), not just images. Google indexes text, not pixels.</div><div class="check-impact high">High</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Bio paragraph in real text</strong> — Your About section bio must be real paragraph text in the DOM. If it's on a canvas or an image, it doesn't exist to Google.</div><div class="check-impact high">High</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Portfolio linked from GitHub profile README</strong> — GitHub profiles rank high. Link to your portfolio from your GitHub bio and pinned README.</div><div class="check-impact high">High</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>LinkedIn featured section → your portfolio URL</strong> — LinkedIn's domain authority helps your portfolio get crawled faster.</div><div class="check-impact high">High</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>All WebP images with explicit width/height</strong> — Prevents layout shift (CLS). Width/height attributes let the browser reserve space before image loads.</div><div class="check-impact med">Med</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Canonical URL in head</strong> — Prevents duplicate content issues if your portfolio is ever mirrored or shared via preview links.</div><div class="check-impact med">Med</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>sitemap.xml submitted to Google Search Console</strong> — Submit your sitemap URL. Google will crawl your portfolio within 48 hours.</div><div class="check-impact med">Med</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Lighthouse Performance 90+</strong> — Run Lighthouse in Chrome DevTools in incognito mode. Fix LCP (lazy-load Spline), CLS (explicit img dimensions), FID (defer non-critical JS).</div><div class="check-impact med">Med</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Share on dev.to or Hashnode with a "how I built it" post</strong> — dev.to posts rank in Google. A post titled "How I built my portfolio with GSAP + Matter.js" will outrank your actual portfolio and backlink to it.</div><div class="check-impact med">Med</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>All icon buttons have aria-label</strong> — Required for accessibility AND Lighthouse score. "GitHub" not "External link."</div><div class="check-impact low">Low</div></div>
+    <div class="check-item"><div class="check-box">✓</div><div class="check-label"><strong>Twitter/X portfolio showcase thread</strong> — Post a screen recording of the physics skills section + noise field. These go viral in dev Twitter. One viral thread = 500+ visitors in a day.</div><div class="check-impact low">Low</div></div>
+  </div>
+
+  <div class="divider"></div>
+
+
+  <!-- ═══════════════ FINAL NOTE ═══════════════ -->
+  <div class="section">
+    <h3 class="section-title" style="font-size: 28px; font-family: var(--font-display);">One Last Thing</h3>
+    <div class="section-body">
+      <p>The portfolio isn't finished when it deploys. It's finished when a recruiter, senior engineer, or company founder messages you about it. That's the only metric that matters.</p>
+      <p>Ship Concept 01 "Signal" with the Matter.js physics skills section. Then share it everywhere before you think it's "perfect." The imperfect live portfolio beats the perfect unreleased one every single time.</p>
+      <p>The physics skills section alone will generate more DMs than the rest of your portfolio combined. Build that. Ship that. Then iterate on everything else.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ████████████ FOOTER ████████████ -->
+<div class="doc-footer">
+  <div class="footer-text">
+    Portfolio Blueprint v2.0 — 2026 Edition<br>
+    Built for 3rd Year CSE Developer<br>
+    Concepts: 10 · Prompts: 8 · Tools: 12 · Days to Ship: 8
+  </div>
+  <div class="footer-brand">folio<span>.</span>build</div>
+</div>
+
+</body>
+</html>
