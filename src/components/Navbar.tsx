@@ -39,7 +39,7 @@ export default function Navbar() {
         </span>
       </a>
 
-      {/* Top Right: Theme Toggle */}
+      {/* Top Right: Theme Toggle 
       <button
         onClick={toggleTheme}
         disabled={isTransitioning}
@@ -56,6 +56,7 @@ export default function Navbar() {
           </svg>
         )}
       </button>
+      */}
     </nav>
   )
 }
