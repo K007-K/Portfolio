@@ -22,16 +22,13 @@ class InfinityCurve extends THREE.Curve<THREE.Vector3> {
   }
 }
 
-// --- Electric Current Shader (Jagged Lightning) ---
+// --- Electric Current Shader (Slow, Rare Pulse) ---
 const ElectricMaterial = () => {
   const materialRef = useRef<THREE.ShaderMaterial>(null)
-  const { theme } = useTheme()
-  const color = theme === 'dark' ? new THREE.Color('#4f6bf6') : new THREE.Color('#ffffff')
 
   useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.uTime.value = state.clock.elapsedTime
-      materialRef.current.uniforms.uColor.value = color
     }
   })
 
@@ -42,8 +39,7 @@ const ElectricMaterial = () => {
       blending={THREE.AdditiveBlending}
       depthWrite={false}
       uniforms={{
-        uTime: { value: 0 },
-        uColor: { value: color }
+        uTime: { value: 0 }
       }}
       vertexShader={`
         varying vec2 vUv;
@@ -54,59 +50,48 @@ const ElectricMaterial = () => {
       `}
       fragmentShader={`
         uniform float uTime;
-        uniform vec3 uColor;
         varying vec2 vUv;
         
-        // Pseudo-random hash
-        float hash(vec2 p) {
-            return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
-        }
-        
-        // 2D Value Noise
-        float noise(vec2 p) {
-            vec2 i = floor(p);
-            vec2 f = fract(p);
-            vec2 u = f * f * (3.0 - 2.0 * f);
-            return mix(
-              mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
-              mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), 
-            u.y);
-        }
-        
         void main() {
-          vec2 st = vUv;
+          // Slow speed for the spark
+          float speed = 0.08;
           
-          // Make the lightning wrap around the tube multiple times
-          st.x *= 30.0; 
+          // Create a cycle that is much longer than the tube itself (0 to 1).
+          // If cycleLength is 3.0, the spark travels the tube (0 to 1) and then is completely invisible 
+          // while it travels from 1.0 to 3.0, creating a long delay between appearances.
+          float cycleLength = 3.0; 
+          float sparkPos = mod(uTime * speed, cycleLength); 
           
-          // Generate chaotic high-frequency noise for the jagged shape
-          float n = noise(vec2(st.x - uTime * 15.0, uTime * 25.0));
-          float n2 = noise(vec2(st.x * 2.0 + uTime * 10.0, uTime * 30.0));
+          // Calculate distance along the tube
+          float diff = sparkPos - vUv.x;
           
-          // Combine noises for a more complex jagged path
-          float path = (n + n2 * 0.5) / 1.5;
+          float intensity = 0.0;
+          // The spark has a core at the front, and a fading tail stretching behind it
+          float tailLength = 0.15;
+          if (diff > 0.0 && diff < tailLength) {
+              intensity = 1.0 - (diff / tailLength);
+              intensity = pow(intensity, 4.0); // Very sharp, glowing core
+          }
           
-          // Create a thin line displaced by the noise. vUv.y is the circumference (0 to 1).
-          // We center the line at 0.5 and displace it.
-          float distanceToLine = abs(vUv.y - 0.5 + (path - 0.5) * 0.6);
+          // Restrict the spark to a thin line along the edge of the tube
+          // vUv.y is the circumference (0 to 1). We place it at 0.25 (the top/side edge)
+          float distY = abs(vUv.y - 0.25);
+          distY = min(distY, 1.0 - distY); // Handle wrapping
+          float intensityY = smoothstep(0.03, 0.0, distY);
           
-          // Make it a glowing sharp line
-          float intensity = 0.005 / (distanceToLine + 0.001);
+          intensity *= intensityY;
           
-          // Add global flickering to the bolt
-          float flicker = noise(vec2(uTime * 50.0, 0.0));
-          intensity *= (flicker * 1.5);
+          // Deep electric blue color mapping
+          vec3 deepBlue = vec3(0.02, 0.15, 1.0);
+          vec3 brightCore = vec3(0.8, 0.9, 1.0);
           
-          // Mask the lightning so it only appears in isolated, moving patches (like arcs)
-          float boltMask = noise(vec2(vUv.x * 8.0 - uTime * 3.0, 0.0));
-          boltMask = smoothstep(0.5, 0.7, boltMask);
+          // Mix colors based on intensity so the core is white/cyan and the edges are deep blue
+          vec3 finalColor = mix(deepBlue, brightCore, intensity);
           
-          intensity *= boltMask;
-          
-          // Clamp to prevent blowout
-          intensity = clamp(intensity, 0.0, 1.5);
+          // Boost alpha for strong glow
+          float alpha = intensity * 1.5;
 
-          gl_FragColor = vec4(uColor, intensity);
+          gl_FragColor = vec4(finalColor, alpha);
         }
       `}
     />
