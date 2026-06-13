@@ -56,7 +56,7 @@ export default function Projects() {
                     <h3 
                       className="font-display font-black text-3xl md:text-5xl lg:text-6xl tracking-tighter text-transparent bg-clip-text bg-[length:200%_auto] animate-shimmer-sweep uppercase break-words max-w-4xl"
                       style={{
-                        backgroundImage: 'linear-gradient(to right, var(--text-primary) 0%, var(--text-primary) 40%, #ffffff 50%, var(--text-primary) 60%, var(--text-primary) 100%)',
+                        backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.3) 60%, rgba(255,255,255,0.3) 100%)',
                       }}
                     >
                       {project.title}
