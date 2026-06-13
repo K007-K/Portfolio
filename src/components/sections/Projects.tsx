@@ -1,115 +1,131 @@
-// Projects section — dark bento grid with fixed GSAP reveals and hover glow
-import { useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { projects } from '../../lib/data'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
-
-gsap.registerPlugin(ScrollTrigger)
 
 export default function Projects() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const containerRef = useRef<HTMLElement>(null)
 
-  useGSAP(() => {
-    const cards = gsap.utils.toArray<HTMLElement>('.project-card')
-
-    cards.forEach((card, i) => {
-      gsap.from(card, {
-        y: 80,
-        opacity: 0,
-        rotateX: 4,
-        duration: 0.9,
-        ease: 'power3.out',
-        delay: i * 0.12,
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 92%',
-          toggleActions: 'play none none none',
-        },
-      })
+  useEffect(() => {
+    projects.forEach((_, i) => {
+      const content = document.getElementById(`project-content-${i}`)
+      if (!content) return
+      
+      if (activeIndex === i) {
+        gsap.to(content, { 
+          height: 'auto', 
+          opacity: 1, 
+          duration: 0.7, 
+          ease: 'power3.out' 
+        })
+      } else {
+        gsap.to(content, { 
+          height: 0, 
+          opacity: 0, 
+          duration: 0.5, 
+          ease: 'power3.inOut' 
+        })
+      }
     })
-  }, { scope: containerRef })
+  }, [activeIndex])
 
   return (
-    <section ref={containerRef} id="projects" className="py-32 relative bg-transparent z-10">
-      <div className="section-container">
-        <h2 className="section-heading text-text-primary">
+    <section ref={containerRef} id="projects" className="py-32 relative bg-transparent z-10 min-h-screen">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-12">
+        <h2 className="section-heading text-text-primary mb-16 md:mb-24 text-center">
           SELECTED <span className="text-aurora-blue italic">WORKS</span>
         </h2>
 
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 auto-rows-auto">
+        <div className="border-b border-white/[0.04]">
           {projects.map((project, i) => {
-            const isWide = i % 3 === 0
-            const spanClass = isWide ? 'md:col-span-7' : 'md:col-span-5'
+            const isExpanded = activeIndex === i
+            const isDimmed = activeIndex !== null && activeIndex !== i
 
             return (
-              <div
+              <div 
                 key={project.title}
-                className={`project-card relative group rounded-3xl p-8 border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl overflow-hidden transition-all duration-500 hover:border-aurora-blue/30 hover:shadow-[0_0_50px_-20px_rgba(79,107,246,0.2)] flex flex-col justify-between min-h-[320px] ${spanClass}`}
-                style={{ perspective: '800px' }}
+                className={`border-t border-white/[0.04] transition-all duration-700 ${isDimmed ? 'opacity-20 blur-[2px] grayscale' : 'opacity-100'} group cursor-pointer`}
+                onClick={() => setActiveIndex(isExpanded ? null : i)}
               >
-                {/* Faded project number */}
-                <span className="absolute top-4 right-6 font-display font-black text-[100px] leading-none text-white/[0.03] select-none pointer-events-none">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-
-                {/* Hover gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-aurora-blue/[0.06] via-transparent to-aurora-purple/[0.04] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-                <div className="relative z-10 flex-1">
-                  <h3 className="font-display font-semibold tracking-tight text-2xl md:text-3xl mb-4 text-text-primary group-hover:text-aurora-blue transition-colors duration-300">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-text-secondary leading-relaxed mb-6 max-w-lg">
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border border-white/[0.08] bg-white/[0.02] text-text-secondary group-hover:border-aurora-blue/20 transition-colors duration-300"
-                      >
-                        <span className="w-1 h-1 rounded-full bg-aurora-blue/60" />
-                        {t}
-                      </span>
-                    ))}
+                {/* Accordion Header Row */}
+                <div className="py-8 md:py-12 flex justify-between items-center group-hover:bg-white/[0.02] transition-colors duration-500 px-4 md:px-8">
+                  <div className="flex flex-col md:flex-row md:items-baseline gap-4 md:gap-12">
+                    <span className="font-mono text-xs md:text-sm text-text-secondary group-hover:text-aurora-blue transition-colors duration-500">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <h3 className="font-display font-black text-3xl md:text-5xl lg:text-6xl tracking-tighter text-text-primary group-hover:translate-x-4 transition-transform duration-500 will-change-transform uppercase break-words max-w-4xl">
+                      {project.title}
+                    </h3>
+                  </div>
+                  
+                  <div className="hidden md:flex items-center ml-8">
+                     <span className={`font-mono text-xs tracking-widest uppercase transition-colors duration-300 ${isExpanded ? 'text-aurora-blue' : 'text-text-secondary group-hover:text-white'}`}>
+                       {isExpanded ? 'Close' : 'Explore'}
+                     </span>
                   </div>
                 </div>
 
-                {/* Action links */}
-                <div className="flex items-center gap-4 mt-6 pt-4 border-t border-white/[0.06] relative z-10">
-                  {project.github && (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`GitHub repo for ${project.title}`}
-                      className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-aurora-blue transition-all duration-300 group/link"
-                    >
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                      </svg>
-                      <span className="font-mono text-xs">Source</span>
-                      <svg className="w-3 h-3 transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7v10" />
-                      </svg>
-                    </a>
-                  )}
-                  {project.live && (
-                    <a
-                      href={project.live}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Live demo of ${project.title}`}
-                      className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-aurora-purple transition-all duration-300 group/link"
-                    >
-                      <span className="font-mono text-xs">Live</span>
-                      <svg className="w-3 h-3 transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7v10" />
-                      </svg>
-                    </a>
-                  )}
+                {/* Inner Liquid Glass Content (GSAP Controlled Height) */}
+                <div 
+                  id={`project-content-${i}`} 
+                  className="overflow-hidden h-0 opacity-0 px-4 md:px-8"
+                >
+                  <div className="pb-12 pt-4">
+                    <div className="interactive-physics w-full rounded-3xl overflow-hidden bg-space-800/30 dark:bg-gradient-to-br dark:from-white/[0.02] dark:to-white/[0.05] backdrop-blur-3xl border border-space-border dark:border-white/10 p-8 md:p-12 shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col lg:flex-row gap-12 lg:gap-16 cursor-default">
+                      
+                      <div className="flex-1">
+                        <span className="font-mono text-[10px] tracking-widest uppercase text-aurora-blue mb-6 block">
+                          Project Overview
+                        </span>
+                        <p className="text-text-secondary text-lg md:text-xl leading-relaxed mb-10">
+                          {project.description}
+                        </p>
+                        
+                        <div className="flex flex-wrap gap-3">
+                          {project.tech.map((t) => (
+                            <span 
+                              key={t} 
+                              className="px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] font-mono text-[10px] uppercase tracking-wider text-text-primary backdrop-blur-md shadow-inner"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Links */}
+                      <div className="lg:w-64 flex flex-col gap-4 justify-center">
+                        {project.github && (
+                          <a 
+                            href={project.github} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="w-full px-6 py-4 rounded-2xl bg-white text-black font-bold uppercase tracking-wider text-xs flex items-center justify-between hover:scale-[1.02] hover:bg-white/90 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                             View Source
+                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                          </a>
+                        )}
+                        {project.live && (
+                           <a 
+                             href={project.live} 
+                             target="_blank" 
+                             rel="noopener noreferrer" 
+                             className="w-full px-6 py-4 rounded-2xl border border-white/20 text-white font-bold uppercase tracking-wider text-xs flex items-center justify-between hover:bg-white/10 transition-colors duration-300"
+                             onClick={(e) => e.stopPropagation()}
+                           >
+                             Live Demo
+                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                           </a>
+                        )}
+                      </div>
+
+                      {/* Ambient Glow */}
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(79,107,246,0.08)_0%,transparent_70%)] pointer-events-none -z-10" />
+
+                    </div>
+                  </div>
                 </div>
               </div>
             )
