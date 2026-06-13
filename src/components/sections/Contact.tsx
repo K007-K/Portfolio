@@ -104,59 +104,37 @@ function MagneticWrapper({ children, className = "" }: { children: React.ReactNo
   )
 }
 
-// Floating Label Input Component
-function FloatingInput({ id, label, type, value, onChange, required, isTextArea = false }: any) {
-  const [isFocused, setIsFocused] = useState(false)
-  const isActive = isFocused || value.length > 0
-
+// Premium Glass Input Component
+function GlassInput({ id, label, type, value, onChange, required, isTextArea = false }: any) {
   return (
-    <div className="relative group mt-6">
-      <motion.label
-        htmlFor={id}
-        initial={false}
-        animate={{
-          y: isActive ? -24 : 14,
-          x: isActive ? 0 : 16,
-          scale: isActive ? 0.85 : 1,
-          color: isActive ? '#4f6bf6' : 'rgba(255, 255, 255, 0.4)',
-        }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="absolute left-0 top-0 origin-top-left pointer-events-none"
-      >
+    <div className="group flex flex-col gap-2">
+      <label htmlFor={id} className="text-sm font-medium text-text-secondary group-focus-within:text-aurora-blue transition-colors duration-300">
         {label}
-      </motion.label>
+      </label>
       
-      {isTextArea ? (
-        <textarea
-          id={id}
-          required={required}
-          value={value}
-          onChange={onChange}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          rows={4}
-          className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary text-sm focus:outline-none focus:border-aurora-blue/50 focus:bg-white/[0.05] transition-all duration-300 resize-none shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] focus:shadow-[0_0_20px_-5px_rgba(79,107,246,0.3)]"
-        />
-      ) : (
-        <input
-          id={id}
-          type={type}
-          required={required}
-          value={value}
-          onChange={onChange}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-text-primary text-sm focus:outline-none focus:border-aurora-blue/50 focus:bg-white/[0.05] transition-all duration-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] focus:shadow-[0_0_20px_-5px_rgba(79,107,246,0.3)]"
-        />
-      )}
-      
-      {/* Focus Laser Underline */}
-      <motion.div 
-        initial={false}
-        animate={{ scaleX: isFocused ? 1 : 0, opacity: isFocused ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="absolute bottom-0 left-0 right-0 h-[2px] bg-aurora-blue origin-center blur-[1px] pointer-events-none rounded-b-xl"
-      />
+      <div className="relative">
+        {isTextArea ? (
+          <textarea
+            id={id}
+            required={required}
+            value={value}
+            onChange={onChange}
+            rows={4}
+            className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-aurora-blue/50 focus:bg-white/[0.06] transition-all duration-300 resize-none shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)] focus:shadow-[0_0_20px_-5px_rgba(79,107,246,0.2)]"
+            placeholder={`Enter your ${label.toLowerCase()}...`}
+          />
+        ) : (
+          <input
+            id={id}
+            type={type}
+            required={required}
+            value={value}
+            onChange={onChange}
+            className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-aurora-blue/50 focus:bg-white/[0.06] transition-all duration-300 shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)] focus:shadow-[0_0_20px_-5px_rgba(79,107,246,0.2)] [&:-webkit-autofill]:bg-transparent [&:-webkit-autofill]:text-white [&:-webkit-autofill]:transition-all [&:-webkit-autofill]:duration-[50000s]"
+            placeholder={type === 'email' ? 'john@example.com' : `Enter your ${label.toLowerCase()}...`}
+          />
+        )}
+      </div>
     </div>
   )
 }
@@ -308,8 +286,8 @@ export default function Contact() {
                 I typically reply within 24 hours.
               </p>
               
-              <form onSubmit={handleSubmit} className="space-y-2">
-                <FloatingInput
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <GlassInput
                   id="contact-name"
                   label="Your Name"
                   type="text"
@@ -317,7 +295,7 @@ export default function Contact() {
                   value={formData.name}
                   onChange={(e: any) => setFormData({ ...formData, name: e.target.value })}
                 />
-                <FloatingInput
+                <GlassInput
                   id="contact-email"
                   label="Email Address"
                   type="email"
@@ -325,9 +303,9 @@ export default function Contact() {
                   value={formData.email}
                   onChange={(e: any) => setFormData({ ...formData, email: e.target.value })}
                 />
-                <FloatingInput
+                <GlassInput
                   id="contact-message"
-                  label="How can I help you?"
+                  label="Message"
                   isTextArea
                   required
                   value={formData.message}
