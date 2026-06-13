@@ -22,7 +22,7 @@ class InfinityCurve extends THREE.Curve<THREE.Vector3> {
   }
 }
 
-// --- Electric Current Shader ---
+// --- Electric Current Shader (Jagged Lightning) ---
 const ElectricMaterial = () => {
   const materialRef = useRef<THREE.ShaderMaterial>(null)
   const { theme } = useTheme()
@@ -57,19 +57,56 @@ const ElectricMaterial = () => {
         uniform vec3 uColor;
         varying vec2 vUv;
         
+        // Pseudo-random hash
+        float hash(vec2 p) {
+            return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+        }
+        
+        // 2D Value Noise
+        float noise(vec2 p) {
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            vec2 u = f * f * (3.0 - 2.0 * f);
+            return mix(
+              mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+              mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), 
+            u.y);
+        }
+        
         void main() {
-          // vUv.x travels along the length of the tube
-          // Create a primary electrical pulse
-          float pulse = sin(vUv.x * 30.0 - uTime * 15.0) * 0.5 + 0.5;
-          pulse = pow(pulse, 20.0); // Make it a sharp line of energy
+          vec2 st = vUv;
           
-          // Create a secondary, faster chaotic pulse to simulate electricity
-          float pulse2 = sin(vUv.x * 80.0 - uTime * 35.0) * 0.5 + 0.5;
-          pulse2 = pow(pulse2, 40.0);
+          // Make the lightning wrap around the tube multiple times
+          st.x *= 30.0; 
           
-          float alpha = pulse + (pulse2 * 0.5);
+          // Generate chaotic high-frequency noise for the jagged shape
+          float n = noise(vec2(st.x - uTime * 15.0, uTime * 25.0));
+          float n2 = noise(vec2(st.x * 2.0 + uTime * 10.0, uTime * 30.0));
           
-          gl_FragColor = vec4(uColor, alpha);
+          // Combine noises for a more complex jagged path
+          float path = (n + n2 * 0.5) / 1.5;
+          
+          // Create a thin line displaced by the noise. vUv.y is the circumference (0 to 1).
+          // We center the line at 0.5 and displace it.
+          float distanceToLine = abs(vUv.y - 0.5 + (path - 0.5) * 0.6);
+          
+          // Make it a glowing sharp line
+          float intensity = 0.005 / (distanceToLine + 0.001);
+          
+          // Add global flickering to the bolt
+          float flicker = noise(vec2(uTime * 50.0, 0.0));
+          intensity *= (flicker * 1.5);
+          
+          // Mask the lightning so it only appears in isolated, moving patches (like arcs)
+          float boltMask = noise(vec2(vUv.x * 8.0 - uTime * 3.0, 0.0));
+          boltMask = smoothstep(0.5, 0.7, boltMask);
+          
+          intensity *= boltMask;
+          
+          // Clamp to prevent blowout
+          intensity = clamp(intensity, 0.0, 1.5);
+
+          gl_FragColor = vec4(uColor, intensity);
         }
       `}
     />
