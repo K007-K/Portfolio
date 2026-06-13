@@ -19,44 +19,57 @@ class InfinityCurve extends THREE.Curve<THREE.Vector3> {
     const z = Math.sin(u) * 1.5; // Add depth so it's not totally flat
 
     return optionalTarget.set(x, y, z).multiplyScalar(this.scale);
-  }
-}
-
-function ShockwaveRing({ delay = 0 }) {
-  const meshRef = useRef<THREE.Mesh>(null)
-  const materialRef = useRef<THREE.MeshBasicMaterial>(null)
+// --- Electric Current Shader ---
+const ElectricMaterial = () => {
+  const materialRef = useRef<THREE.ShaderMaterial>(null)
   const { theme } = useTheme()
-  const color = theme === 'dark' ? '#4f6bf6' : '#ffffff'
-  const timeOffset = useRef(delay)
+  const color = theme === 'dark' ? new THREE.Color('#4f6bf6') : new THREE.Color('#ffffff')
 
-  useFrame((_, delta) => {
-    timeOffset.current += delta
-    const t = timeOffset.current % 6 // 6 second expanding loop
-    
-    if (meshRef.current && materialRef.current) {
-      // Scale out
-      const scale = 1 + t * 1.2
-      meshRef.current.scale.set(scale, scale, scale)
-      
-      // Fade out over the 6 seconds
-      // Opacity peaks at 0.3 then slowly fades to 0
-      const opacity = t < 0.5 ? t * 0.6 : Math.max(0, 0.3 * (1 - (t - 0.5) / 5.5))
-      materialRef.current.opacity = opacity
+  useFrame((state) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime
+      materialRef.current.uniforms.uColor.value = color
     }
   })
 
   return (
-    <mesh ref={meshRef} rotation-x={Math.PI / 2}>
-      <torusGeometry args={[3, 0.02, 16, 100]} />
-      <meshBasicMaterial 
-        ref={materialRef} 
-        color={color} 
-        transparent 
-        opacity={0} 
-        blending={THREE.AdditiveBlending} 
-        depthWrite={false} 
-      />
-    </mesh>
+    <shaderMaterial
+      ref={materialRef}
+      transparent
+      blending={THREE.AdditiveBlending}
+      depthWrite={false}
+      uniforms={{
+        uTime: { value: 0 },
+        uColor: { value: color }
+      }}
+      vertexShader={`
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `}
+      fragmentShader={`
+        uniform float uTime;
+        uniform vec3 uColor;
+        varying vec2 vUv;
+        
+        void main() {
+          // vUv.x travels along the length of the tube
+          // Create a primary electrical pulse
+          float pulse = sin(vUv.x * 30.0 - uTime * 15.0) * 0.5 + 0.5;
+          pulse = pow(pulse, 20.0); // Make it a sharp line of energy
+          
+          // Create a secondary, faster chaotic pulse to simulate electricity
+          float pulse2 = sin(vUv.x * 80.0 - uTime * 35.0) * 0.5 + 0.5;
+          pulse2 = pow(pulse2, 40.0);
+          
+          float alpha = pulse + (pulse2 * 0.5);
+          
+          gl_FragColor = vec4(uColor, alpha);
+        }
+      `}
+    />
   )
 }
 
@@ -101,12 +114,13 @@ function InfinityLoop() {
   return (
     <group scale={scale}>
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1} position={[0, 0, -4]}>
-        {/* The 3D Shockwaves */}
-        <ShockwaveRing delay={0} />
-        <ShockwaveRing delay={2} />
-        <ShockwaveRing delay={4} />
+        {/* The Inner Electric Current */}
+        <mesh>
+          <tubeGeometry args={[curve, 256, 0.7, 16, true]} />
+          <ElectricMaterial />
+        </mesh>
 
-        {/* The Infinity Glass Loop */}
+        {/* The Outer Infinity Glass Loop */}
         <mesh ref={meshRef}>
           <tubeGeometry args={[curve, 256, 0.8, 64, true]} />
           <MeshTransmissionMaterial ref={materialRef} {...glassProps} resolution={1024} />
