@@ -30,14 +30,14 @@ export default function Navbar() {
       className="fixed top-6 left-0 w-full z-50 transition-all duration-500 will-change-transform pointer-events-none px-4 sm:px-6 flex justify-between items-start"
     >
       {/* Top Left: Floating KK */}
-      <a
-        href="#hero"
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className={`relative pointer-events-auto w-14 h-14 rounded-full flex items-center justify-center border border-white/5 hover:border-white/20 transition-all duration-300 group hover:scale-105 ${glassStyles}`}
       >
         <span className="font-display font-bold text-lg text-text-primary tracking-widest uppercase group-hover:text-text-secondary transition-colors duration-300">
           KK
         </span>
-      </a>
+      </button>
 
       {/* Top Right: Theme Toggle 
       <button
