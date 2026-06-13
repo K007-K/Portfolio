@@ -5,7 +5,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import LiquidGlassButton from '../ui/liquid-glass-button'
+import { LiquidButton } from '../ui/liquid-glass-button'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -314,11 +314,12 @@ export default function Contact() {
                 />
                 
                 <div className="pt-6">
-                  <LiquidGlassButton
-                    text={sending ? "Transmitting..." : "Send Message"}
+                  <LiquidButton
                     onClick={handleSubmit}
-                    className="w-full"
-                  />
+                    className="w-full text-white bg-transparent hover:bg-white/5 border border-white/20"
+                  >
+                    {sending ? "Transmitting..." : "Send Message"}
+                  </LiquidButton>
                 </div>
               </form>
             </div>
