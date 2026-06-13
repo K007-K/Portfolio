@@ -1,118 +1,94 @@
-import { useRef, useMemo } from 'react'
+// Skills section — infinite GSAP marquee with pause-on-hover and glow effects
+import { useRef } from 'react'
 import { skills } from '../../lib/data'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 
-const Pill = ({ item, icon }: { item: string; icon: string }) => (
-  <div className="group px-6 md:px-8 py-3 md:py-4 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-xl whitespace-nowrap flex items-center gap-3 transition-all duration-500 hover:-translate-y-2 hover:scale-110 hover:bg-aurora-purple/20 hover:border-aurora-purple/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] hover:shadow-[0_10px_40px_rgba(139,92,246,0.4)] cursor-crosshair will-change-transform">
-    <span className="text-xl md:text-2xl drop-shadow-md group-hover:rotate-12 transition-transform duration-300">{icon}</span>
-    <span className="font-display font-medium tracking-wide text-text-secondary group-hover:text-white transition-colors duration-300">
-      {item}
-    </span>
-  </div>
-)
-
 export default function Skills() {
   const containerRef = useRef<HTMLElement>(null)
-  
-  // Flatten skills and attach their parent category icon
-  const allSkills = useMemo(() => {
-    return Object.values(skills).flatMap(cat => 
-      cat.items.map(item => ({ item, icon: cat.icon }))
-    )
-  }, [])
+  const row1Ref = useRef<HTMLDivElement>(null)
+  const row2Ref = useRef<HTMLDivElement>(null)
+  const tween1Ref = useRef<gsap.core.Tween | null>(null)
+  const tween2Ref = useRef<gsap.core.Tween | null>(null)
 
-  // Create the 3 distinct rows (doubled for seamless infinite looping)
-  const row1 = useMemo(() => [...allSkills, ...allSkills], [allSkills])
-  const row2 = useMemo(() => {
-    const reversed = [...allSkills].reverse()
-    return [...reversed, ...reversed]
-  }, [allSkills])
-  const row3 = useMemo(() => {
-    const offset = [...allSkills.slice(5), ...allSkills.slice(0, 5)]
-    return [...offset, ...offset]
-  }, [allSkills])
+  const allSkills = Object.values(skills).flatMap(cat => cat.items)
+  const row1 = allSkills.slice(0, Math.ceil(allSkills.length / 2))
+  const row2 = allSkills.slice(Math.ceil(allSkills.length / 2))
 
   useGSAP(() => {
-    // Row 1 goes Left
-    gsap.to('.marquee-row-1', {
+    tween1Ref.current = gsap.to(row1Ref.current, {
       xPercent: -50,
+      ease: 'none',
+      duration: 40,
       repeat: -1,
-      duration: 35,
-      ease: 'none'
     })
-    
-    // Row 2 goes Right (Start at -50% and move to 0%)
-    gsap.fromTo('.marquee-row-2', 
+
+    tween2Ref.current = gsap.fromTo(row2Ref.current,
       { xPercent: -50 },
-      { xPercent: 0, repeat: -1, duration: 40, ease: 'none' }
-    )
-
-    // Row 3 goes Left (Slightly faster)
-    gsap.to('.marquee-row-3', {
-      xPercent: -50,
-      repeat: -1,
-      duration: 30,
-      ease: 'none'
-    })
-
-    // Subtle entrance animation
-    gsap.from('.marquee-wrapper', {
-      opacity: 0,
-      rotate: 0,
-      scale: 0.9,
-      duration: 1.5,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top 80%',
+      {
+        xPercent: 0,
+        ease: 'none',
+        duration: 45,
+        repeat: -1,
       }
-    })
-
+    )
   }, { scope: containerRef })
 
+  const handleMouseEnter = () => {
+    if (tween1Ref.current) gsap.to(tween1Ref.current, { timeScale: 0, duration: 0.5 })
+    if (tween2Ref.current) gsap.to(tween2Ref.current, { timeScale: 0, duration: 0.5 })
+  }
+
+  const handleMouseLeave = () => {
+    if (tween1Ref.current) gsap.to(tween1Ref.current, { timeScale: 1, duration: 0.8 })
+    if (tween2Ref.current) gsap.to(tween2Ref.current, { timeScale: 1, duration: 0.8 })
+  }
+
   return (
-    <section ref={containerRef} id="skills" className="py-32 relative bg-transparent z-10 overflow-hidden min-h-[70vh] flex flex-col justify-center">
-      
-      <div className="w-full max-w-7xl mx-auto px-6 md:px-12 mb-16 md:mb-24 relative z-20">
-        <h2 className="section-heading text-text-primary text-center">
+    <section ref={containerRef} id="skills" className="py-28 relative overflow-hidden bg-transparent border-y border-white/[0.04] z-10">
+      <div className="mb-16 text-center">
+        <h2 className="section-heading text-text-primary mb-2">
           ENGINEERING <span className="text-aurora-purple italic">ARSENAL</span>
         </h2>
       </div>
 
-      {/* The Diagonal Wrapper */}
-      <div 
-        className="marquee-wrapper relative w-[110vw] -ml-[5vw] flex flex-col gap-6 md:gap-8 rotate-[-4deg] scale-105"
-        style={{ 
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
-          maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)' 
-        }}
+      <div
+        className="flex flex-col gap-6 overflow-hidden relative"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        {/* Row 1 */}
-        <div className="marquee-row-1 flex gap-6 md:gap-8 w-max hover:[animation-play-state:paused]">
-          {row1.map((skill, i) => (
-            <Pill key={`r1-${i}`} item={skill.item} icon={skill.icon} />
+        {/* Fade masks */}
+        <div className="absolute inset-y-0 left-0 w-20 md:w-48 bg-gradient-to-r from-space-900 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-20 md:w-48 bg-gradient-to-l from-space-900 to-transparent z-10 pointer-events-none" />
+
+        {/* Row 1 — moves left */}
+        <div ref={row1Ref} className="flex whitespace-nowrap w-max gap-3 md:gap-5">
+          {[...row1, ...row1, ...row1, ...row1].map((skill, i) => (
+            <div
+              key={`r1-${i}`}
+              className="inline-flex items-center justify-center px-5 md:px-8 py-3 rounded-full border border-white/[0.06] bg-white/[0.02] hover:border-aurora-purple/40 hover:bg-aurora-purple/[0.06] hover:shadow-[0_0_25px_-5px_rgba(139,92,246,0.3)] transition-all duration-300 cursor-default select-none group"
+            >
+              <span className="font-display font-medium text-sm md:text-lg tracking-wide text-text-secondary group-hover:text-text-primary uppercase transition-colors duration-300">
+                {skill}
+              </span>
+            </div>
           ))}
         </div>
 
-        {/* Row 2 */}
-        <div className="marquee-row-2 flex gap-6 md:gap-8 w-max">
-          {row2.map((skill, i) => (
-            <Pill key={`r2-${i}`} item={skill.item} icon={skill.icon} />
-          ))}
-        </div>
-
-        {/* Row 3 */}
-        <div className="marquee-row-3 flex gap-6 md:gap-8 w-max">
-          {row3.map((skill, i) => (
-            <Pill key={`r3-${i}`} item={skill.item} icon={skill.icon} />
+        {/* Row 2 — moves right */}
+        <div ref={row2Ref} className="flex whitespace-nowrap w-max gap-3 md:gap-5">
+          {[...row2, ...row2, ...row2, ...row2].map((skill, i) => (
+            <div
+              key={`r2-${i}`}
+              className="inline-flex items-center justify-center px-5 md:px-8 py-3 rounded-full border border-white/[0.06] bg-white/[0.02] hover:border-aurora-blue/40 hover:bg-aurora-blue/[0.06] hover:shadow-[0_0_25px_-5px_rgba(79,107,246,0.3)] transition-all duration-300 cursor-default select-none group"
+            >
+              <span className="font-display font-medium text-sm md:text-lg tracking-wide text-text-secondary group-hover:text-text-primary uppercase transition-colors duration-300">
+                {skill}
+              </span>
+            </div>
           ))}
         </div>
       </div>
-      
-      {/* Ambient Backlight to make the glass pop */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-aurora-purple/5 rounded-[100%] blur-[120px] pointer-events-none -z-10" />
-
     </section>
   )
 }
