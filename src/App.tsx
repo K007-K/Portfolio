@@ -1,69 +1,41 @@
-// Portfolio "Signal" — App root with lazy-loaded sections and smooth scroll
-import { lazy, Suspense } from 'react'
-import { HelmetProvider } from 'react-helmet-async'
-import { useSmoothScroll } from './hooks/useSmoothScroll'
-import GlobalCursor from './components/ui/GlobalCursor'
-import './index.css'
+// App root — assembles Navbar, sections, and Footer
+import { HelmetProvider, Helmet } from 'react-helmet-async'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import Hero from './components/sections/Hero'
+import About from './components/sections/About'
+import Skills from './components/sections/Skills'
+import Projects from './components/sections/Projects'
+import Contact from './components/sections/Contact'
+import SmoothScroller from './components/SmoothScroller'
 
-// ── Lazy-loaded sections (code-split below the fold) ──
-const Hero = lazy(() => import('./components/sections/Hero'))
-const About = lazy(() => import('./components/sections/About'))
-const Projects = lazy(() => import('./components/sections/Projects'))
-const Skills = lazy(() => import('./components/sections/Skills'))
-const Experience = lazy(() => import('./components/sections/Experience'))
-const Contact = lazy(() => import('./components/sections/Contact'))
-
-// ── Section loading fallback ──
-function SectionFallback() {
+export default function App() {
   return (
-    <div className="min-h-[50vh] flex items-center justify-center">
-      <div
-        className="w-6 h-6 rounded-full border-2 border-transparent animate-spin"
-        style={{
-          borderTopColor: 'var(--accent)',
-          borderRightColor: 'var(--accent)',
-        }}
-      />
-    </div>
-  )
-}
+    <>
+      <SmoothScroller />
+      <HelmetProvider>
+      <Helmet>
+        <title>Karthik Kuramdasu — Full-Stack Developer</title>
+        <meta
+          name="description"
+          content="Full-Stack Developer building scalable systems & intelligent interfaces. React, Node.js, AI/GenAI."
+        />
+      </Helmet>
 
-function App() {
-  // Initialize Lenis smooth scroll + GSAP ScrollTrigger integration
-  useSmoothScroll()
+      <div className="min-h-screen bg-space-900 text-text-primary selection:bg-aurora-blue selection:text-space-900 overflow-hidden">
+        <Navbar />
 
-  return (
-    <HelmetProvider>
-      {/* Custom cursor — desktop only */}
-      <GlobalCursor />
-
-      <main>
-        <Suspense fallback={<SectionFallback />}>
+        <main>
           <Hero />
-        </Suspense>
-
-        <Suspense fallback={<SectionFallback />}>
           <About />
-        </Suspense>
-
-        <Suspense fallback={<SectionFallback />}>
-          <Projects />
-        </Suspense>
-
-        <Suspense fallback={<SectionFallback />}>
           <Skills />
-        </Suspense>
-
-        <Suspense fallback={<SectionFallback />}>
-          <Experience />
-        </Suspense>
-
-        <Suspense fallback={<SectionFallback />}>
+          <Projects />
           <Contact />
-        </Suspense>
-      </main>
+        </main>
+
+        <Footer />
+      </div>
     </HelmetProvider>
+    </>
   )
 }
-
-export default App

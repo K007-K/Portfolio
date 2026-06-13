@@ -1,140 +1,109 @@
-/* Portfolio "Signal" — Global Design System */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Fontsource Imports ── */
-@import '@fontsource/syne/400.css';
-@import '@fontsource/syne/500.css';
-@import '@fontsource/syne/600.css';
-@import '@fontsource/syne/700.css';
-@import '@fontsource/syne/800.css';
-@import '@fontsource/dm-sans/300.css';
-@import '@fontsource/dm-sans/400.css';
-@import '@fontsource/dm-sans/500.css';
-@import '@fontsource/dm-mono/400.css';
-@import '@fontsource/dm-mono/500.css';
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-/* ── CSS Variables — Blueprint Design Tokens ── */
-:root {
-  --bg: #080808;
-  --surface: #101010;
-  --surface2: #161616;
-  --border: rgba(255, 255, 255, 0.07);
-  --border-light: rgba(255, 255, 255, 0.12);
-  --text: #f0ede8;
-  --muted: #888888;
-  --muted2: #555555;
-  --accent: #d4f57a;
-  --accent2: #7af5c8;
-  --accent3: #f57ab4;
-  --accent4: #f5c57a;
-  --red: #ff5a5a;
-  --blue: #7ab4f5;
+  html, body {
+    background-color: theme('colors.space.900');
+    color: theme('colors.text.primary');
+    font-family: theme('fontFamily.sans');
+    /* Disable default scroll-behavior since we use Lenis */
+    scroll-behavior: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+  }
 
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'DM Mono', monospace;
+  ::selection {
+    background-color: theme('colors.aurora.blue');
+    color: theme('colors.space.900');
+  }
 }
 
-/* ── Base Reset ── */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ─── Lenis Smooth Scroll ─── */
+html.lenis, html.lenis body {
+  height: auto;
 }
 
-html {
-  scroll-behavior: smooth;
-  /* Lenis will override this — keeping as fallback */
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
-body {
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.7;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  cursor: none; /* Hide default cursor — GlobalCursor takes over */
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
 }
 
-/* ── Selection ── */
-::selection {
-  background-color: rgba(212, 245, 122, 0.2);
-  color: var(--text);
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
-/* ── Scrollbar (Chromium) ── */
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ─── Scrollbar ─── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: theme('colors.space.900');
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--muted2);
-  border-radius: 3px;
+  background: theme('colors.space.border');
+  border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+  background: theme('colors.space.800');
 }
 
-/* ── Global Typography Classes ── */
-.font-display {
-  font-family: var(--font-display);
-}
-
-.font-body {
-  font-family: var(--font-body);
-}
-
-.font-mono {
-  font-family: var(--font-mono);
-}
-
-/* ── Frosted Glass Panel ── */
-.glass-panel {
-  background: rgba(16, 16, 16, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
-/* ── Section Base ── */
-.section-padding {
-  padding: 120px 64px;
-}
-
-@media (max-width: 768px) {
-  .section-padding {
-    padding: 80px 24px;
+/* ─── Section Utilities ─── */
+@layer components {
+  .section-container {
+    @apply max-w-7xl mx-auto px-6 md:px-12 lg:px-24;
   }
 
-  body {
-    cursor: auto; /* Restore default cursor on mobile */
+  .card-base {
+    @apply bg-space-800 rounded-3xl border border-space-border p-8 transition-all duration-500;
+  }
+
+  .card-base:hover {
+    @apply shadow-[0_0_40px_-15px_rgba(79,107,246,0.3)] border-aurora-blue/30 -translate-y-2;
+  }
+
+  .section-heading {
+    @apply font-display font-medium tracking-tight text-4xl md:text-6xl mb-16;
   }
 }
 
-/* ── Accent Glow (for hover states) ── */
-.accent-glow {
-  box-shadow: 0 0 20px rgba(212, 245, 122, 0.1),
-              0 0 60px rgba(212, 245, 122, 0.05);
+/* ─── Aurora Drift Animations ─── */
+@keyframes aurora-drift {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  33% { transform: translate(-45%, -55%) scale(1.1); }
+  66% { transform: translate(-55%, -45%) scale(0.9); }
+}
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, 40px) scale(1.15); }
+}
+@keyframes aurora-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.1); }
 }
 
-/* ── Will-change helper classes ── */
-.will-transform {
-  will-change: transform;
-}
+.animate-aurora-drift { animation: aurora-drift 12s ease-in-out infinite; }
+.animate-aurora-drift-2 { animation: aurora-drift-2 15s ease-in-out infinite; }
+.animate-aurora-drift-3 { animation: aurora-drift-3 18s ease-in-out infinite; }
 
-.will-opacity {
-  will-change: opacity;
+/* ─── Scroll indicator pulse ─── */
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.4; transform: translateY(8px); }
 }
+.animate-scroll-pulse { animation: scroll-pulse 2s ease-in-out infinite; }
+
