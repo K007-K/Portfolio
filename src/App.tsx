@@ -11,9 +11,29 @@ import Projects from './components/sections/Projects'
 import Contact from './components/sections/Contact'
 import SmoothScroller from './components/SmoothScroller'
 
+import { useState, useEffect } from 'react'
+
+function InitialLoader() {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [])
+
+  return (
+    <div 
+      className={`fixed inset-0 z-[9999] bg-[#050505] pointer-events-none transition-opacity duration-[2000ms] ease-in-out ${isLoading ? 'opacity-100' : 'opacity-0'}`}
+    />
+  )
+}
+
 export default function App() {
   return (
     <ThemeProvider>
+      <InitialLoader />
       <SmoothScroller />
       <HelmetProvider>
         <Helmet>
