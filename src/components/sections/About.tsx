@@ -319,14 +319,31 @@ export default function About() {
                 </div>
                 {/* Download Button */}
                 <div className="absolute right-4 flex items-center">
-                  <a 
-                    href="/Kuramdasu_Karthik.pdf" 
-                    download="Karthik_Kuramdasu_Resume.pdf"
-                    className="w-7 h-7 rounded flex items-center justify-center text-white/40 hover:text-white/90 hover:bg-white/10 transition-all duration-300"
+                  <button 
+                    onClick={async () => {
+                      try {
+                        const response = await fetch('/Kuramdasu_Karthik.pdf');
+                        const blob = await response.blob();
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          const link = document.createElement('a');
+                          link.href = reader.result as string;
+                          link.download = 'Karthik_Kuramdasu_Resume.pdf';
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        };
+                        reader.readAsDataURL(blob);
+                      } catch (err) {
+                        console.error('Download failed', err);
+                        window.open('/Kuramdasu_Karthik.pdf', '_blank');
+                      }
+                    }}
+                    className="w-7 h-7 rounded flex items-center justify-center text-white/40 hover:text-white/90 hover:bg-white/10 transition-all duration-300 cursor-pointer"
                     title="Download Resume"
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  </a>
+                  </button>
                 </div>
               </div>
 

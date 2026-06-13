@@ -40,9 +40,9 @@
   }
 
   .light .hero-text {
-    color: #ffffff;
-    -webkit-text-stroke: 2px #000000;
-    text-shadow: 0 4px 25px rgba(0,0,0,0.4);
+    color: #000000;
+    -webkit-text-stroke: 2px #ffffff;
+    text-shadow: 0 4px 25px rgba(255,255,255,0.6);
   }
 
   /* Massive Background Stroke Text */
