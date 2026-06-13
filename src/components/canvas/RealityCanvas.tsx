@@ -22,6 +22,44 @@ class InfinityCurve extends THREE.Curve<THREE.Vector3> {
   }
 }
 
+function ShockwaveRing({ delay = 0 }) {
+  const meshRef = useRef<THREE.Mesh>(null)
+  const materialRef = useRef<THREE.MeshBasicMaterial>(null)
+  const { theme } = useTheme()
+  const color = theme === 'dark' ? '#4f6bf6' : '#ffffff'
+  const timeOffset = useRef(delay)
+
+  useFrame((_, delta) => {
+    timeOffset.current += delta
+    const t = timeOffset.current % 6 // 6 second expanding loop
+    
+    if (meshRef.current && materialRef.current) {
+      // Scale out
+      const scale = 1 + t * 1.2
+      meshRef.current.scale.set(scale, scale, scale)
+      
+      // Fade out over the 6 seconds
+      // Opacity peaks at 0.3 then slowly fades to 0
+      const opacity = t < 0.5 ? t * 0.6 : Math.max(0, 0.3 * (1 - (t - 0.5) / 5.5))
+      materialRef.current.opacity = opacity
+    }
+  })
+
+  return (
+    <mesh ref={meshRef} rotation-x={Math.PI / 2}>
+      <torusGeometry args={[3, 0.02, 16, 100]} />
+      <meshBasicMaterial 
+        ref={materialRef} 
+        color={color} 
+        transparent 
+        opacity={0} 
+        blending={THREE.AdditiveBlending} 
+        depthWrite={false} 
+      />
+    </mesh>
+  )
+}
+
 // --- The Infinity Loop (Möbius Concept) ---
 function InfinityLoop() {
   const meshRef = useRef<THREE.Mesh>(null)
@@ -63,6 +101,12 @@ function InfinityLoop() {
   return (
     <group scale={scale}>
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1} position={[0, 0, -4]}>
+        {/* The 3D Shockwaves */}
+        <ShockwaveRing delay={0} />
+        <ShockwaveRing delay={2} />
+        <ShockwaveRing delay={4} />
+
+        {/* The Infinity Glass Loop */}
         <mesh ref={meshRef}>
           <tubeGeometry args={[curve, 256, 0.8, 64, true]} />
           <MeshTransmissionMaterial ref={materialRef} {...glassProps} resolution={1024} />
