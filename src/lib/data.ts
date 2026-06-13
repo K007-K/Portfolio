@@ -81,24 +81,24 @@ export const projects = [
     tech: ['Next.js 14', 'TypeScript', 'Supabase PostgreSQL', 'FastAPI', 'Tailwind CSS'],
     description:
       'Enterprise-grade governance platform for managing outsourced debt collection operations across multiple agencies, regions, and organizational hierarchies with automated allocation and SLA tracking.',
-    github: 'https://github.com/K007-K/fedex-dca',
-    live: 'https://fedex-dca-demo.vercel.app',
+    github: 'https://github.com/K007-K/fedex-dca-control-tower',
+    live: 'https://fedex-dca-control-tower.vercel.app',
   },
   {
     title: 'SmartCart AI',
     tech: ['React.js', 'Tailwind CSS', 'LLM APIs'],
     description:
       'Conversational shopping assistant that helps users compare products, discover relevant options, and make purchase decisions from natural-language prompts.',
-    github: 'https://github.com/K007-K/smartcart-ai',
-    live: 'https://smartcart-ai-demo.vercel.app',
+    github: 'https://github.com/K007-K/SmartCartAI',
+    live: 'https://thesmartcartai.netlify.app/',
   },
   {
     title: 'Roameo',
     tech: ['React.js', 'Supabase', 'Gemini API', 'Groq API'],
     description:
       'AI travel planning application that creates destination-specific itineraries by combining user preferences, trip duration, and budget constraints.',
-    github: 'https://github.com/K007-K/roameo',
-    live: 'https://roameo-app.vercel.app',
+    github: 'https://github.com/K007-K/AI-Travel-Assistant',
+    live: 'https://roameo-rz80.onrender.com/',
   },
 ]
 
