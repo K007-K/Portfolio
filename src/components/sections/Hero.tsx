@@ -68,11 +68,11 @@ export default function Hero() {
     // Character-by-character reveal with clipPath
     tl.from(chars1, {
       yPercent: 120,
-      rotateX: -80,
+      rotateX: -60,
       opacity: 0,
-      duration: 0.8,
-      ease: 'power4.out',
-      stagger: 0.03,
+      duration: 1.5,
+      ease: 'power3.out',
+      stagger: 0.08,
     })
 
     // Scroll indicator fades in
