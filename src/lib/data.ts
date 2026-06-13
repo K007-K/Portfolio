@@ -15,7 +15,7 @@ export const personalInfo = {
   roles: ['FULL STACK', 'REACT', 'AI/GENAI', 'SAAS'],
   socials: {
     github: 'https://github.com/K007-K',
-    linkedin: 'https://linkedin.com/in/karthik-kuramdasu',
+    linkedin: 'https://www.linkedin.com/in/karthikkuramdasu/',
     leetcode: 'https://leetcode.com/u/karthik_kuramdasu',
     codechef: 'https://codechef.com/users/karthik_kuramdasu',
     email: 'mailto:karthikuramdasu@gmail.com',

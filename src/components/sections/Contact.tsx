@@ -225,7 +225,11 @@ export default function Contact() {
               {contactItems.map((item) => (
                 <div key={item.id} className="relative group flex items-center gap-5">
                   <MagneticWrapper>
-                    <div className="w-12 h-12 rounded-2xl border border-white/[0.08] bg-black/40 backdrop-blur-md flex items-center justify-center text-text-secondary group-hover:border-aurora-blue/50 group-hover:text-aurora-blue group-hover:shadow-[0_0_15px_-3px_rgba(79,107,246,0.3)] transition-all duration-300 cursor-pointer">
+                    <div className="relative w-12 h-12 rounded-2xl border border-white/[0.08] bg-black/40 backdrop-blur-md flex items-center justify-center text-text-secondary group-hover:border-aurora-blue/50 group-hover:text-aurora-blue group-hover:shadow-[0_0_15px_-3px_rgba(79,107,246,0.3)] transition-all duration-300 cursor-pointer">
+                      {/* Hover Reveal Radar for Location */}
+                      {item.id === 'location' && (
+                        <span className="absolute inset-[-4px] rounded-[1.2rem] border border-aurora-blue opacity-0 group-hover:opacity-100 group-hover:animate-ping pointer-events-none" />
+                      )}
                       {item.icon}
                     </div>
                   </MagneticWrapper>
@@ -250,10 +254,6 @@ export default function Contact() {
                     ) : (
                       <span className="font-mono text-sm text-text-secondary">
                         {item.label}
-                        {/* Hover Reveal Radar for Location */}
-                        {item.id === 'location' && (
-                          <span className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-aurora-blue opacity-0 group-hover:opacity-100 group-hover:animate-ping pointer-events-none" />
-                        )}
                       </span>
                     )}
 
