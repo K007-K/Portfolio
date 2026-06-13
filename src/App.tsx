@@ -10,6 +10,8 @@ import Skills from './components/sections/Skills'
 import Projects from './components/sections/Projects'
 import Contact from './components/sections/Contact'
 import SmoothScroller from './components/SmoothScroller'
+import ScrollDivider from './components/ui/ScrollDivider'
+import CinematicReveal from './components/ui/CinematicReveal'
 
 import { useState, useEffect } from 'react'
 
@@ -49,10 +51,26 @@ export default function App() {
 
           <main>
             <Hero />
-            <About />
-            <Skills />
-            <Projects />
-            <Contact />
+            
+            <ScrollDivider />
+            <CinematicReveal>
+              <About />
+            </CinematicReveal>
+            
+            <ScrollDivider />
+            <CinematicReveal>
+              <Skills />
+            </CinematicReveal>
+            
+            <ScrollDivider />
+            <CinematicReveal>
+              <Projects />
+            </CinematicReveal>
+            
+            <ScrollDivider />
+            <CinematicReveal>
+              <Contact />
+            </CinematicReveal>
           </main>
 
           <Footer />
