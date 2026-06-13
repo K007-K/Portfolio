@@ -163,7 +163,7 @@ function FloatingInput({ id, label, type, value, onChange, required, isTextArea 
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
-  const [sending, setSending] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const containerRef = useRef<HTMLElement>(null)
 
@@ -185,20 +185,41 @@ export default function Contact() {
     })
   }, { scope: containerRef })
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    setSending(true)
+    setStatus('sending')
     
-    // In a real scenario, this would use EmailJS or Formspree.
-    // For now, we will simulate a send delay and open mailto.
-    setTimeout(() => {
-      const subject = encodeURIComponent(`Portfolio Contact from ${formData.name}`)
-      const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)
-      window.open(`mailto:${personalInfo.email}?subject=${subject}&body=${body}`, '_self')
-      
-      setSending(false)
-      setFormData({ name: '', email: '', message: '' })
-    }, 1500)
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          subject: `New Portfolio Contact from ${formData.name}`,
+          from_name: "Karthik Portfolio",
+        }),
+      })
+
+      const result = await response.json()
+      if (result.success) {
+        setStatus('success')
+        setFormData({ name: '', email: '', message: '' })
+        setTimeout(() => setStatus('idle'), 3000)
+      } else {
+        setStatus('error')
+        setTimeout(() => setStatus('idle'), 3000)
+      }
+    } catch (error) {
+      console.error("Failed to send message:", error)
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 3000)
+    }
   }
 
   const handleCopy = (id: string, value: string) => {
@@ -316,9 +337,12 @@ export default function Contact() {
                 <div className="pt-6">
                   <LiquidButton
                     onClick={handleSubmit}
-                    className="w-full text-white bg-transparent hover:bg-white/5 border border-white/20"
+                    className="w-full text-white bg-transparent hover:bg-white/5 border-none"
                   >
-                    {sending ? "Transmitting..." : "Send Message"}
+                    {status === 'idle' && "Send Message"}
+                    {status === 'sending' && "Transmitting..."}
+                    {status === 'success' && "Message Sent!"}
+                    {status === 'error' && "Error. Try Again."}
                   </LiquidButton>
                 </div>
               </form>
