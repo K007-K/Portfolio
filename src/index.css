@@ -161,3 +161,12 @@ html.lenis, html.lenis body {
 }
 .animate-scroll-pulse { animation: scroll-pulse 2s ease-in-out infinite; }
 
+/* ─── Continuous Text Shimmer ─── */
+@keyframes shimmer-sweep {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer-sweep {
+  animation: shimmer-sweep 3s linear infinite;
+}
