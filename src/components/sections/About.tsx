@@ -212,28 +212,19 @@ export default function About() {
           </div>
           </div>
 
-          {/* Certifications & Hackathons Stack */}
-          <div className="stagger-enter flex flex-col gap-6">
-            
-            {/* SIH Certification */}
-            <div className="interactive-physics relative w-full flex-[0.4] rounded-[2rem] overflow-hidden bg-space-800/30 dark:bg-gradient-to-bl dark:from-white/[0.02] dark:to-white/[0.05] backdrop-blur-3xl border border-space-border dark:border-white/10 p-6 flex flex-col justify-center group shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:border-text-primary/20 dark:hover:border-white/30 transition-all duration-500">
+          {/* Hackathons Unified Card */}
+          <div className="stagger-enter w-full h-full">
+            <div className="interactive-physics relative w-full h-full rounded-[2rem] overflow-hidden bg-space-800/30 dark:bg-gradient-to-bl dark:from-white/[0.02] dark:to-white/[0.05] backdrop-blur-3xl border border-space-border dark:border-white/10 p-8 flex flex-col justify-between group shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:border-text-primary/20 dark:hover:border-white/30 transition-all duration-500 min-h-[350px]">
               <div className="relative z-10">
-                <span className="font-mono text-[10px] tracking-widest uppercase text-text-secondary mb-3 block">
-                  Certification
+                <span className="font-mono text-[10px] tracking-widest uppercase text-text-secondary border border-space-border dark:border-white/10 bg-space-800/50 dark:bg-black/40 px-4 py-1.5 rounded-full group-hover:border-text-primary/20 transition-colors duration-500 mb-6 inline-block">
+                  Hackathons & Conquests
                 </span>
-                <h4 className="font-display font-bold text-xl text-text-primary group-hover:scale-[1.02] origin-left transition-transform duration-500">
+                <h4 className="font-display font-black text-2xl md:text-3xl text-text-primary leading-tight group-hover:scale-[1.02] origin-left transition-transform duration-500 drop-shadow-sm">
                   Smart India Hackathon (SIH) Semi-Finalist
                 </h4>
               </div>
-              <div className="glare-effect absolute top-0 left-0 w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_50%)] opacity-0 pointer-events-none mix-blend-screen transition-opacity duration-300" />
-            </div>
-
-            {/* Hackathon Digital Badges */}
-            <div className="interactive-physics relative w-full flex-[0.6] rounded-[2rem] overflow-hidden bg-space-800/30 dark:bg-gradient-to-br dark:from-white/[0.02] dark:to-white/[0.05] backdrop-blur-3xl border border-space-border dark:border-white/10 p-6 flex flex-col group shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:border-text-primary/20 dark:hover:border-white/30 transition-all duration-500">
-              <div className="relative z-10 h-full flex flex-col justify-between">
-                <span className="font-mono text-[10px] tracking-widest uppercase text-text-secondary mb-4 block">
-                  Hackathon Conquests
-                </span>
+              
+              <div className="relative z-10 mt-8">
                 <div className="flex flex-wrap gap-3">
                   {["Tata Elxsi Hackathon", "24-Hour Hackathon (GVP)", "VoyageHack 3.0"].map((hackathon, i) => (
                     <div key={i} className="font-mono text-[10px] font-bold uppercase tracking-widest px-4 py-2 border border-space-border dark:border-white/10 rounded-full bg-space-800/50 dark:bg-white/[0.03] text-text-primary/80 group-hover:border-text-primary/40 dark:group-hover:bg-white/10 group-hover:text-text-primary transition-all duration-500 flex items-center gap-2 shadow-inner">
