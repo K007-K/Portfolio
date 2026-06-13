@@ -206,7 +206,10 @@ export default function About() {
               <div className="text-6xl font-hero tracking-tighter text-text-primary drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all duration-500">
                 {education.cgpa.split('/')[0]}
               </div>
-              <svg width="40" height="40" viewBox="0 0 40 40" className="text-text-secondary/40 group-hover:text-text-primary/60 transition-colors duration-500"><circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" strokeWidth="2"/><path d="M10 20h20M20 10v20" stroke="currentColor" strokeWidth="2"/></svg>
+              <svg width="40" height="40" viewBox="0 0 40 40" className="text-text-secondary/40 group-hover:text-text-primary/60 group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-500">
+                <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" strokeWidth="2"/>
+                <path d="M14 26L26 14M16 14h10v10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
             <div className="glare-effect absolute top-0 left-0 w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_50%)] opacity-0 pointer-events-none mix-blend-screen transition-opacity duration-300" />
           </div>
