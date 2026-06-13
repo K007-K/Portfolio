@@ -53,7 +53,14 @@ export default function Projects() {
                     <span className="font-mono text-xs md:text-sm text-text-secondary group-hover:text-aurora-blue transition-colors duration-500">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <h3 className="font-display font-black text-3xl md:text-5xl lg:text-6xl tracking-tighter text-text-primary group-hover:translate-x-4 transition-transform duration-500 will-change-transform uppercase break-words max-w-4xl">
+                    <h3 
+                      className={`font-display font-black text-3xl md:text-5xl lg:text-6xl tracking-tighter text-transparent bg-clip-text bg-[length:300%_100%] bg-[position:100%_0] group-hover:bg-[position:0%_0] transition-all duration-[1.5s] ease-in-out will-change-[background-position,transform] group-hover:translate-x-4 uppercase break-words max-w-4xl`}
+                      style={{
+                        backgroundImage: isExpanded 
+                          ? 'linear-gradient(to right, #4f6bf6, #4f6bf6 45%, #ffffff 50%, #4f6bf6 55%, #4f6bf6)' 
+                          : 'linear-gradient(to right, var(--text-primary), var(--text-primary) 45%, #ffffff 50%, var(--text-primary) 55%, var(--text-primary))',
+                      }}
+                    >
                       {project.title}
                     </h3>
                   </div>
