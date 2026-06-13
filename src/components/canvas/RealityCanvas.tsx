@@ -19,6 +19,9 @@ class InfinityCurve extends THREE.Curve<THREE.Vector3> {
     const z = Math.sin(u) * 1.5; // Add depth so it's not totally flat
 
     return optionalTarget.set(x, y, z).multiplyScalar(this.scale);
+  }
+}
+
 // --- Electric Current Shader ---
 const ElectricMaterial = () => {
   const materialRef = useRef<THREE.ShaderMaterial>(null)
