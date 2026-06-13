@@ -1,7 +1,5 @@
-// Hero section — cinematic character-by-character reveal with text scramble roles
 import { useRef, useEffect, useState } from 'react'
 import { personalInfo } from '../../lib/data'
-import AuroraBackground from '../AuroraBackground'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -47,9 +45,13 @@ function useTextScramble(texts: string[], interval = 3000) {
   return displayText
 }
 
+import RealityCanvas from '../canvas/RealityCanvas'
+
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const nameRef = useRef<HTMLHeadingElement>(null)
+  const nameRef1 = useRef<HTMLHeadingElement>(null)
+  const parallaxWrapperRef = useRef<HTMLDivElement>(null)
+  const scrollWrapperRef = useRef<HTMLDivElement>(null)
   const roleRef = useRef<HTMLDivElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const scrollIndicatorRef = useRef<HTMLDivElement>(null)
@@ -58,120 +60,189 @@ export default function Hero() {
 
   // Entrance animation — plays once on load
   useGSAP(() => {
-    const nameChars = nameRef.current?.querySelectorAll('.char')
-    if (!nameChars) return
+    const chars1 = nameRef1.current?.querySelectorAll('.char')
+    if (!chars1) return
 
     const tl = gsap.timeline({ delay: 0.3 })
 
     // Character-by-character reveal with clipPath
-    tl.from(nameChars, {
+    tl.from(chars1, {
       yPercent: 120,
       rotateX: -80,
       opacity: 0,
       duration: 0.8,
       ease: 'power4.out',
-      stagger: 0.04,
+      stagger: 0.03,
     })
 
-    // Role text fades in
-    tl.from(roleRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      ease: 'power3.out',
-    }, '-=0.3')
-
-    // Subtitle fades in
-    tl.from(subtitleRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      ease: 'power3.out',
-    }, '-=0.3')
-
     // Scroll indicator fades in
-    tl.from(scrollIndicatorRef.current, {
-      opacity: 0,
-      duration: 0.8,
-    }, '-=0.2')
+    tl.fromTo(scrollIndicatorRef.current, 
+      { opacity: 0 },
+      { opacity: 1, duration: 0.8 },
+      '-=0.2'
+    )
 
   }, { scope: containerRef })
 
   // Scroll-driven parallax — text fades and scales down as user scrolls
   useGSAP(() => {
-    gsap.to(nameRef.current, {
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1,
-      },
-      scale: 0.85,
-      opacity: 0,
-      y: -80,
-      ease: 'none',
-    })
+    // Delay ScrollTrigger to allow entrance animation to set initial opacity: 1
+    const timer = setTimeout(() => {
+      gsap.to(scrollWrapperRef.current, {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1,
+        },
+        scale: 0.85,
+        opacity: 0,
+        y: -80,
+        ease: 'none',
+      })
+    }, 1500)
 
-    gsap.to([roleRef.current, subtitleRef.current], {
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: '60% top',
-        scrub: 1,
-      },
-      opacity: 0,
-      y: -40,
-      ease: 'none',
-    })
+    return () => clearTimeout(timer)
   }, { scope: containerRef })
 
-  const firstName = personalInfo.name.split(' ')[0].toUpperCase()
+  // Magnetic Typography Hover Physics
+  useEffect(() => {
+    const container = containerRef.current
+    const chars1 = nameRef1.current?.querySelectorAll('.char')
+    const parallaxWrap = parallaxWrapperRef.current
+
+    if (!container || !chars1 || !parallaxWrap) return
+    const allChars = Array.from(chars1)
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e
+      const { innerWidth, innerHeight } = window
+
+      // Global 3D Parallax for the whole word
+      const xPos = (clientX / innerWidth - 0.5) * 30 // max 15px tilt
+      const yPos = (clientY / innerHeight - 0.5) * 30
+      
+      gsap.to(parallaxWrap, {
+        x: xPos,
+        y: yPos,
+        rotateX: -yPos * 0.5,
+        rotateY: xPos * 0.5,
+        duration: 1,
+        ease: 'power3.out',
+        overwrite: 'auto'
+      })
+
+      // Individual Character Magnetic Pull
+      allChars.forEach((char) => {
+        const rect = char.getBoundingClientRect()
+        const charCenterX = rect.left + rect.width / 2
+        const charCenterY = rect.top + rect.height / 2
+
+        const distX = clientX - charCenterX
+        const distY = clientY - charCenterY
+        const distance = Math.sqrt(distX * distX + distY * distY)
+
+        const maxDistance = 200 // Magnetic radius
+
+        if (distance < maxDistance) {
+          // Calculate pull strength (closer = stronger pull)
+          const pull = (maxDistance - distance) / maxDistance
+          const pullX = distX * pull * 0.4 // max 40% of distance towards cursor
+          const pullY = distY * pull * 0.4
+
+          gsap.to(char, {
+            x: pullX,
+            y: pullY,
+            scale: 1 + (pull * 0.1), // slight pop when hovering near
+            duration: 0.3,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          })
+        } else {
+          // Spring back to original position
+          gsap.to(char, {
+            x: 0,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: 'elastic.out(1, 0.4)',
+            overwrite: 'auto'
+          })
+        }
+      })
+    }
+
+    const handleMouseLeave = () => {
+      // Reset global parallax
+      gsap.to(parallaxWrap, {
+        x: 0, y: 0, rotateX: 0, rotateY: 0, duration: 1, ease: 'power3.out', overwrite: 'auto'
+      })
+      // Reset chars
+      allChars.forEach((char) => {
+        gsap.to(char, { x: 0, y: 0, scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)', overwrite: 'auto' })
+      })
+    }
+
+    container.addEventListener('mousemove', handleMouseMove)
+    container.addEventListener('mouseleave', handleMouseLeave)
+
+    return () => {
+      container.removeEventListener('mousemove', handleMouseMove)
+      container.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [])
 
   return (
     <section
       ref={containerRef}
       id="hero"
-      className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-space-900"
+      className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent"
     >
-      <AuroraBackground />
+      {/* 3D Canvas scoped specifically to the Hero section */}
+      <div className="absolute inset-0 z-0">
+        <RealityCanvas />
+      </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 w-full">
-        {/* Main name — character by character */}
-        <h1
-          ref={nameRef}
-          className="font-display font-black text-hero text-text-primary uppercase tracking-tighter will-change-transform overflow-hidden"
-          style={{ perspective: '600px' }}
-        >
-          {firstName.split('').map((char, i) => (
-            <span
-              key={i}
-              className="char inline-block will-change-transform"
-              style={{ transformOrigin: 'bottom center' }}
+        {/* Scroll wrapper separates ScrollTrigger from mouse parallax */}
+        <div ref={scrollWrapperRef} className="flex flex-col items-center">
+          
+          {/* Parallax wrapper for mouse interaction */}
+          <div ref={parallaxWrapperRef} style={{ perspective: '1000px' }} className="flex flex-col items-center gap-0">
+            {/* First Name */}
+            <h1
+              ref={nameRef1}
+              className="font-hero hero-text text-[clamp(4rem,10vw,12rem)] uppercase tracking-normal cursor-crosshair leading-[0.85]"
+              style={{ transformStyle: 'preserve-3d' }}
             >
-              {char}
+              {'KARTHIK'.split('').map((char, i) => (
+                <span key={i} className="char inline-block will-change-transform" style={{ transformOrigin: 'center center' }}>
+                  {char}
+                </span>
+              ))}
+            </h1>
+          </div>
+
+          {/* Scrambled role text */}
+          <div
+            ref={roleRef}
+            className="mt-6 flex items-center gap-3"
+          >
+            <div className="w-12 h-px bg-aurora-blue" />
+            <span className="font-mono text-sm md:text-base text-aurora-blue tracking-[0.2em] uppercase">
+              {scrambledRole}
             </span>
-          ))}
-        </h1>
+            <div className="w-12 h-px bg-aurora-blue" />
+          </div>
 
-        {/* Scrambled role text */}
-        <div
-          ref={roleRef}
-          className="mt-6 flex items-center gap-3"
-        >
-          <div className="w-12 h-px bg-aurora-blue" />
-          <span className="font-mono text-sm md:text-base text-aurora-blue tracking-[0.2em] uppercase">
-            {scrambledRole}
-          </span>
-          <div className="w-12 h-px bg-aurora-blue" />
+          {/* Subtitle */}
+          <p
+            ref={subtitleRef}
+            className="mt-5 font-sans text-sm md:text-base text-text-secondary max-w-md leading-relaxed"
+          >
+            {personalInfo.tagline}
+          </p>
         </div>
-
-        {/* Subtitle */}
-        <p
-          ref={subtitleRef}
-          className="mt-5 font-sans text-sm md:text-base text-text-secondary max-w-md leading-relaxed"
-        >
-          {personalInfo.tagline}
-        </p>
       </div>
 
       {/* Scroll indicator */}

@@ -31,7 +31,7 @@ export default function Projects() {
   }, { scope: containerRef })
 
   return (
-    <section ref={containerRef} id="projects" className="py-32 relative bg-space-900 z-10">
+    <section ref={containerRef} id="projects" className="py-32 relative bg-transparent z-10">
       <div className="section-container">
         <h2 className="section-heading text-text-primary">
           SELECTED <span className="text-aurora-blue italic">WORKS</span>

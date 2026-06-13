@@ -45,7 +45,7 @@ export default function Skills() {
   }
 
   return (
-    <section ref={containerRef} id="skills" className="py-28 relative overflow-hidden bg-space-900 border-y border-white/[0.04] z-10">
+    <section ref={containerRef} id="skills" className="py-28 relative overflow-hidden bg-transparent border-y border-white/[0.04] z-10">
       <div className="mb-16 text-center">
         <h2 className="section-heading text-text-primary mb-2">
           ENGINEERING <span className="text-aurora-purple italic">ARSENAL</span>

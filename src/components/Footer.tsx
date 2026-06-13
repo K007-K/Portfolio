@@ -37,7 +37,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="border-t border-white/[0.04] py-8 bg-space-900 relative z-10">
+    <footer className="border-t border-white/[0.04] py-8 bg-transparent relative z-10">
       <div className="section-container flex items-center justify-between">
         <p className="font-mono text-xs text-text-secondary/60">
           © {new Date().getFullYear()} {personalInfo.name}

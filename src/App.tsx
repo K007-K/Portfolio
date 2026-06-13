@@ -1,5 +1,7 @@
 // App root — assembles Navbar, sections, and Footer
 import { HelmetProvider, Helmet } from 'react-helmet-async'
+import { ThemeProvider } from './context/ThemeContext'
+import RealityCanvas from './components/canvas/RealityCanvas'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Hero from './components/sections/Hero'
@@ -11,31 +13,31 @@ import SmoothScroller from './components/SmoothScroller'
 
 export default function App() {
   return (
-    <>
+    <ThemeProvider>
       <SmoothScroller />
       <HelmetProvider>
-      <Helmet>
-        <title>Karthik Kuramdasu — Full-Stack Developer</title>
-        <meta
-          name="description"
-          content="Full-Stack Developer building scalable systems & intelligent interfaces. React, Node.js, AI/GenAI."
-        />
-      </Helmet>
+        <Helmet>
+          <title>Karthik Kuramdasu — Reality Engine</title>
+          <meta
+            name="description"
+            content="Interactive Spatial Portfolio — Full-Stack Developer building scalable systems & intelligent interfaces."
+          />
+        </Helmet>
 
-      <div className="min-h-screen bg-space-900 text-text-primary selection:bg-aurora-blue selection:text-space-900 overflow-hidden">
-        <Navbar />
+        <div className="min-h-screen text-text-primary selection:bg-aurora-blue selection:text-white overflow-hidden transition-colors duration-1000">
+          <Navbar />
 
-        <main>
-          <Hero />
-          <About />
-          <Skills />
-          <Projects />
-          <Contact />
-        </main>
+          <main>
+            <Hero />
+            <About />
+            <Skills />
+            <Projects />
+            <Contact />
+          </main>
 
-        <Footer />
-      </div>
-    </HelmetProvider>
-    </>
+          <Footer />
+        </div>
+      </HelmetProvider>
+    </ThemeProvider>
   )
 }

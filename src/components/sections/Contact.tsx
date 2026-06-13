@@ -83,7 +83,7 @@ export default function Contact() {
   }
 
   return (
-    <section ref={containerRef} id="contact" className="py-32 bg-space-900 relative z-10">
+    <section ref={containerRef} id="contact" className="py-32 bg-transparent relative z-10">
       <div className="section-container">
         <h2 className="contact-reveal section-heading text-text-primary">
           LET'S <span className="text-aurora-blue italic">CONNECT</span>

@@ -62,14 +62,15 @@ export const skills = {
 
 export const experience = [
   {
-    role: 'Web Developer Intern',
-    company: 'ApexPlanet',
+    role: 'Full Stack Developer Intern',
+    company: 'Unisoft Agency',
     type: 'Remote',
-    period: 'May 2025 – June 2025',
+    period: 'Jan 2025 – Mar 2025',
     highlights: [
-      'Built 5+ responsive web pages from Figma designs using HTML5, CSS3, JavaScript.',
-      'Improved page load speed by 30% via lazy loading, semantic HTML, and CSS media queries.',
-      'Resolved 15+ UI/UX bugs improving cross-browser compatibility and accessibility.',
+      'Developed and deployed a real-time debate platform enabling multi-room discussions and live participant interaction using React.js, Node.js, Express.js, and Socket.io.',
+      'Implemented scalable WebSocket-based communication architecture for instant messaging, room synchronization, and real-time event handling.',
+      'Designed secure REST APIs and integrated JWT for user session management and protected routes.',
+      'Optimized frontend responsiveness and collaborated using Git/GitHub workflows, modular coding practices, and Postman API testing.',
     ],
   },
 ]
@@ -77,74 +78,61 @@ export const experience = [
 export const projects = [
   {
     title: 'FedEx DCA Control Tower',
-    tech: ['React.js', 'Node.js', 'Chart.js', 'Express.js', 'JWT'],
+    tech: ['Next.js 14', 'TypeScript', 'Supabase PostgreSQL', 'FastAPI', 'Tailwind CSS'],
     description:
-      'Real-time logistics monitoring dashboard with role-based JWT authentication, RESTful APIs, and interactive Chart.js visualizations for operational intelligence.',
+      'Enterprise-grade governance platform for managing outsourced debt collection operations across multiple agencies, regions, and organizational hierarchies with automated allocation and SLA tracking.',
     github: 'https://github.com/K007-K',
     live: '',
   },
   {
     title: 'SmartCart AI',
-    tech: ['React.js', 'LLM APIs', 'Tailwind CSS'],
+    tech: ['React.js', 'Tailwind CSS', 'LLM APIs'],
     description:
-      'AI-powered shopping assistant integrating LLM API for intelligent product recommendations, with optimized React state management and responsive UI.',
+      'Conversational shopping assistant that helps users compare products, discover relevant options, and make purchase decisions from natural-language prompts.',
     github: 'https://github.com/K007-K',
     live: '',
   },
   {
     title: 'Roameo',
-    tech: ['React.js', 'Supabase', 'LLM APIs', 'Groq', 'Gemini'],
+    tech: ['React.js', 'Supabase', 'Gemini API', 'Groq API'],
     description:
-      'Full-stack AI travel planner generating personalized itineraries with budget optimization, powered by Groq and Gemini LLM APIs with Supabase backend.',
-    github: 'https://github.com/K007-K',
-    live: '',
-  },
-  {
-    title: 'Deb8',
-    tech: ['React.js', 'Socket.io', 'Node.js', 'Express.js'],
-    description:
-      'Live debate platform with WebSocket architecture for real-time messaging, topic management, and audience voting with persistent room state.',
+      'AI travel planning application that creates destination-specific itineraries by combining user preferences, trip duration, and budget constraints.',
     github: 'https://github.com/K007-K',
     live: '',
   },
 ]
 
 export const education = {
-  degree: 'B.Tech in Computer Science and Engineering',
+  degree: 'Bachelor of Technology, Computer Science and Engineering',
   institution: 'Anil Neerukonda Institute of Technology and Sciences',
   shortName: 'ANITS',
   period: 'Sep 2023 – Present',
-  cgpa: '8.83 / 10.00',
+  cgpa: '8.83 / 10.0',
   location: 'Visakhapatnam, India',
 }
 
 export const certifications = [
   {
     name: 'Smart India Hackathon (SIH)',
-    issuer: 'Government of India',
-    description: 'Competed and showcased at national level',
+    issuer: 'Semi-Finalist',
+    description: 'Qualified to Semi-Finals in SIH at national level',
   },
   {
     name: 'FedEx SIH @ IIT Madras',
-    issuer: 'FedEx & IIT Madras',
-    description: 'Selected for FedEx problem statement',
+    issuer: 'Semi-Finalist',
+    description: 'Qualified to Semi-Finals for FedEx problem statement',
   },
 ]
 
 export const achievements = [
   {
-    title: 'Stand Supervisor — IND vs NZ T20I',
-    description: 'Led operations at ACA Stadium, Visakhapatnam',
-    icon: '🏏',
-  },
-  {
-    title: 'Smart India Hackathon',
-    description: 'Competed at national level SIH & FedEx SIH (IIT Madras)',
+    title: 'Smart India Hackathon Semi-Finalist',
+    description: 'Qualified to Semi-Finals in SIH & FedEx SIH (IIT Madras)',
     icon: '🏆',
   },
   {
-    title: 'Multiple Hackathons',
-    description: 'Tata Elxsi, 24-Hour GVP, VoyageHack 3.0',
-    icon: '💡',
+    title: 'Competitive Hackathons',
+    description: 'Participated in Tata Elxsi Hackathon, 24-Hour Hackathon (GVP), and VoyageHack 3.0',
+    icon: '💻',
   },
 ]
