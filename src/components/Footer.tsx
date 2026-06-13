@@ -44,19 +44,6 @@ export default function Footer() {
         </p>
 
         <div className="flex items-center gap-5">
-          {socialIcons.map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={s.label}
-              className="text-text-secondary/60 hover:text-aurora-blue transition-colors duration-300"
-            >
-              {s.icon}
-            </a>
-          ))}
-
           {/* Back to top */}
           <button
             onClick={scrollToTop}
