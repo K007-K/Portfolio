@@ -56,7 +56,7 @@ export default function Skills() {
       },
       {
         y: 0,
-        opacity: 0.15, // Default idle opacity is very dim to create spotlight effect
+        opacity: 0.4, // Increased idle opacity so it's clearly visible
         rotateX: 0,
         duration: 1.2,
         stagger: 0.05,
@@ -115,7 +115,8 @@ export default function Skills() {
           // Trigger scramble text once when entering magnetic field
           if (item.dataset.isHovered !== 'true' && pull > 0.4) {
             item.dataset.isHovered = 'true'
-            scrambleText(item, item.dataset.text!)
+            const text = item.dataset.text
+            if (text) scrambleText(item, text)
           }
 
           gsap.to(item, {
@@ -123,8 +124,8 @@ export default function Skills() {
             y: pullY,
             scale: 1 + (pull * 0.2), // Pop up slightly more
             color: '#ffffff',
-            opacity: 0.15 + (pull * 0.85), // Brighten up to 1.0 (Spotlight Effect)
-            textShadow: `0 0 ${pull * 25}px rgba(79, 107, 246, ${pull * 0.8})`, 
+            opacity: 0.4 + (pull * 0.6), // Brighten up to 1.0
+            textShadow: `0 0 ${(pull * 25).toFixed(1)}px rgba(79, 107, 246, ${(pull * 0.8).toFixed(2)})`, 
             duration: 0.4,
             ease: 'power2.out',
             overwrite: 'auto'
@@ -137,8 +138,8 @@ export default function Skills() {
             y: 0,
             scale: 1,
             color: '#ffffff',
-            opacity: 0.15, // Dim background state
-            textShadow: '0 0 0px rgba(79, 107, 246, 0)',
+            opacity: 0.4, // Dim background state
+            textShadow: 'none',
             duration: 0.8,
             ease: 'elastic.out(1, 0.4)',
             overwrite: 'auto'
@@ -155,7 +156,7 @@ export default function Skills() {
       items.forEach((item) => {
         item.dataset.isHovered = 'false'
         gsap.to(item, { 
-          x: 0, y: 0, scale: 1, color: '#ffffff', opacity: 0.15, textShadow: '0 0 0px rgba(79, 107, 246, 0)',
+          x: 0, y: 0, scale: 1, color: '#ffffff', opacity: 0.4, textShadow: 'none',
           duration: 0.8, ease: 'elastic.out(1, 0.4)', overwrite: 'auto' 
         })
       })
