@@ -33,23 +33,32 @@ export default function Skills() {
 
   useGSAP(() => {
     // Honeycomb Assembly Animation
-    gsap.from('.hex-cell', {
-      opacity: 0,
-      scale: 0,
-      y: 60,
-      rotateZ: -15,
-      duration: 0.9,
-      stagger: {
-        amount: 1.5,
-        from: "center",
-        grid: "auto"
+    gsap.fromTo('.hex-cell', 
+      {
+        opacity: 0,
+        scale: 0,
+        y: 60,
+        rotateZ: -15,
       },
-      ease: 'back.out(1.2)',
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top 75%',
+      {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        rotateZ: 0,
+        duration: 0.9,
+        stagger: {
+          amount: 1.5,
+          from: "center",
+          grid: "auto"
+        },
+        ease: 'back.out(1.2)',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse'
+        }
       }
-    })
+    )
   }, { scope: containerRef })
 
   const Hexagon = ({ skill }: { skill: string }) => (
