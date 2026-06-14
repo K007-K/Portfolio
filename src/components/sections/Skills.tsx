@@ -8,7 +8,6 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Skills() {
   const containerRef = useRef<HTMLElement>(null)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   
   const allSkills = Object.values(skills).flatMap(cat => cat.items)
   
@@ -25,39 +24,29 @@ export default function Skills() {
     return chunks
   }
 
+  // Desktop pattern: 6, 5, 6, 5...
   const desktopRows = createChunks(allSkills, [6, 5])
+  // Mobile pattern: 3, 2, 3, 2...
   const mobileRows = createChunks(allSkills, [3, 2])
-
-  // Mouse tracking for the background "Flashlight"
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (!containerRef.current) return
-    const rect = containerRef.current.getBoundingClientRect()
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    })
-  }
 
   useGSAP(() => {
     gsap.fromTo('.hex-cell', 
       {
         opacity: 0,
-        y: 60,
-        scale: 0.8,
-        rotateX: -30,
+        y: 40,
+        scale: 0.9,
       },
       {
         opacity: 1,
         y: 0,
         scale: 1,
-        rotateX: 0,
-        duration: 1.2,
+        duration: 0.8,
         stagger: {
-          amount: 1.5,
+          amount: 1,
           from: "center",
           grid: "auto"
         },
-        ease: 'elastic.out(1, 0.7)',
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top 80%',
@@ -67,91 +56,77 @@ export default function Skills() {
   }, { scope: containerRef })
 
   const Hexagon = ({ skill }: { skill: string }) => {
-    const hexRef = useRef<HTMLDivElement>(null)
-    const [rotate, setRotate] = useState({ x: 0, y: 0 })
+    const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 })
     const [isHovered, setIsHovered] = useState(false)
 
-    // 3D Parallax Tilt Physics
-    const handleHexMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!hexRef.current) return
-      const rect = hexRef.current.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      const centerX = rect.width / 2
-      const centerY = rect.height / 2
-      
-      const rotateX = ((y - centerY) / centerY) * -20 // Tilt up/down
-      const rotateY = ((x - centerX) / centerX) * 20  // Tilt left/right
-      
-      setRotate({ x: rotateX, y: rotateY })
+    // Track mouse position specifically inside THIS hexagon for the magnetic glow
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect()
+      setMousePos({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      })
     }
 
-    const handleHexMouseLeave = () => {
-      setRotate({ x: 0, y: 0 })
-      setIsHovered(false)
-    }
+    const clipPathStr = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+    // Give gradient a unique ID so they don't conflict across SVGs
+    const gradId = `hex-grad-${skill.replace(/[^a-zA-Z0-9]/g, '')}`
 
     return (
       <div 
-        ref={hexRef}
-        onMouseMove={handleHexMouseMove}
+        className="hex-cell relative group cursor-crosshair w-[84px] h-[97px] md:w-[110px] md:h-[127px] lg:w-[130px] lg:h-[150px] shrink-0 transition-transform duration-500 hover:scale-105 hover:z-50"
+        onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={handleHexMouseLeave}
-        className="hex-cell relative group cursor-crosshair w-[84px] h-[97px] md:w-[110px] md:h-[127px] lg:w-[130px] lg:h-[150px] shrink-0"
-        style={{
-          transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale(${isHovered ? 1.15 : 1})`,
-          transition: isHovered ? 'transform 0.1s cubic-bezier(0.2, 0.8, 0.2, 1)' : 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)',
-          zIndex: isHovered ? 50 : 1
-        }}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Massive Hover Flare behind the hexagon */}
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] rounded-full bg-aurora-cyan/40 blur-[30px] transition-all duration-500 pointer-events-none ${isHovered ? 'opacity-100 scale-110' : 'opacity-0 scale-50'}`} />
+        {/* PURE SVG BORDER LAYER */}
+        <svg 
+          className="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_0_10px_rgba(255,255,255,0.05)] group-hover:drop-shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all duration-500" 
+          viewBox="0 0 100 115.47" 
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={isHovered ? "rgba(34,211,238,1)" : "rgba(255,255,255,0.2)"} className="transition-all duration-500" />
+              <stop offset="100%" stopColor={isHovered ? "rgba(139,92,246,1)" : "rgba(255,255,255,0.02)"} className="transition-all duration-500" />
+            </linearGradient>
+          </defs>
+          <polygon 
+            points="50,0 100,28.8675 100,86.6025 50,115.47 0,86.6025 0,28.8675" 
+            fill="none" 
+            stroke={`url(#${gradId})`} 
+            strokeWidth="1.5" 
+            style={{ transformOrigin: 'center', transform: 'scale(0.985)' }}
+          />
+        </svg>
 
-        {/* 
-          SPINNING LASER BORDER CONTAINER
-          Acts as the clipping mask for the spinning conic-gradient
-        */}
+        {/* PURE LIQUID GLASS BODY */}
         <div 
-          className="absolute inset-0 transition-all duration-500 overflow-hidden"
+          className="absolute inset-[1.5px] bg-[#050505]/40 backdrop-blur-md transition-all duration-500 group-hover:bg-[#0a0a0f]/60"
           style={{ 
-            clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-            WebkitClipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+            clipPath: clipPathStr,
+            WebkitClipPath: clipPathStr,
           }}
         >
-          {/* Default static border so it's visible when not spinning brightly */}
-          <div className="absolute inset-0 bg-white/[0.05]" />
-
-          {/* The Spinning Conic Gradient */}
-          <div 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] transition-all duration-500"
-            style={{
-              background: isHovered 
-                ? 'conic-gradient(from 0deg, transparent 50%, rgba(34,211,238,1) 80%, transparent 100%)' 
-                : 'conic-gradient(from 0deg, transparent 50%, rgba(139,92,246,0.2) 80%, transparent 100%)',
-              animation: isHovered ? 'spin 1.5s linear infinite' : 'spin 4s linear infinite'
-            }}
-          />
-
-          {/* 
-            CORE FROSTED GLASS BODY
-            Using padding inset to reveal the spinning border layer underneath
-          */}
-          <div 
-            className="absolute inset-[1px] bg-[#020203]/70 backdrop-blur-2xl flex flex-col items-center justify-center p-2 text-center transition-all duration-500"
-            style={{ 
-              clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-              WebkitClipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-            }}
-          >
-            {/* Specular Glass Highlight (Diagonal physical reflection) */}
-            <div className={`absolute top-0 left-[-50%] w-[200%] h-[50%] bg-gradient-to-b from-white/[0.12] to-transparent -rotate-12 transform-gpu pointer-events-none transition-all duration-500 ${isHovered ? 'opacity-100' : 'opacity-40'}`} />
-            
-            <span className={`font-display font-bold tracking-[0.2em] text-[8px] md:text-[10px] lg:text-xs transition-all duration-300 z-10 ${isHovered ? 'text-white drop-shadow-[0_0_12px_rgba(34,211,238,0.8)] scale-110' : 'text-white/40'}`}>
+          {/* MAGNETIC MOUSE GLOW (Vercel Style) */}
+          {isHovered && (
+            <div 
+              className="absolute pointer-events-none transition-opacity duration-300 opacity-100"
+              style={{
+                width: '160px',
+                height: '160px',
+                left: `${mousePos.x - 80}px`,
+                top: `${mousePos.y - 80}px`,
+                background: 'radial-gradient(circle, rgba(139,92,246,0.3) 0%, rgba(34,211,238,0.1) 40%, transparent 70%)',
+              }}
+            />
+          )}
+          
+          {/* CONTENT */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-2 text-center pointer-events-none">
+            <span className="font-display font-medium tracking-[0.2em] text-[9px] md:text-[10px] lg:text-xs text-white/50 group-hover:text-white transition-colors duration-300 z-10">
               {skill.toUpperCase()}
             </span>
-
-            {/* Inner volumetric glow on hover */}
-            <div className={`absolute inset-0 bg-gradient-to-t from-aurora-cyan/20 to-transparent pointer-events-none transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
           </div>
         </div>
       </div>
@@ -169,7 +144,7 @@ export default function Skills() {
           }}
         >
           {row.map((skill, colIndex) => (
-            <div key={colIndex} className="px-[2px] shrink-0">
+            <div key={colIndex} className="px-[2px] md:px-[3px] shrink-0">
               <Hexagon skill={skill} />
             </div>
           ))}
@@ -183,37 +158,44 @@ export default function Skills() {
       ref={containerRef} 
       id="skills" 
       className="py-24 md:py-40 relative overflow-hidden bg-[#000000] z-10"
-      onMouseMove={handleMouseMove}
     >
-      {/* 
-        MOUSE-TRACKING FLASHLIGHT
-        A dynamic radial gradient that follows the user's mouse, physically illuminating the dark glass.
-      */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-80"
-        style={{
-          background: `radial-gradient(circle 600px at ${mousePos.x}px ${mousePos.y}px, rgba(34,211,238,0.15), transparent 80%)`
-        }}
-      />
-      <div 
-        className="absolute inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-60"
-        style={{
-          background: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, rgba(139,92,246,0.15), transparent 80%)`
-        }}
-      />
+      {/* THE AURORA FOUNDATION (From Hero Section) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[1200px] max-h-[800px] pointer-events-none -z-10 flex items-center justify-center">
+        <div className="absolute w-[600px] h-[600px] bg-aurora-purple/15 blur-[120px] rounded-full animate-aurora-shift-1" />
+        <div className="absolute w-[500px] h-[500px] bg-aurora-cyan/10 blur-[100px] rounded-full animate-aurora-shift-2" />
+      </div>
 
       <style dangerouslySetInnerHTML={{__html: `
         @media (max-width: 767px) { :root { --hex-offset: -24.25px; } }
         @media (min-width: 768px) and (max-width: 1023px) { :root { --hex-offset: -31.75px; } }
         @media (min-width: 1024px) { :root { --hex-offset: -37.5px; } }
+        
+        @keyframes aurora-shift-1 {
+          0%, 100% { transform: translate(-10%, -10%) scale(1); }
+          50% { transform: translate(10%, 10%) scale(1.1); }
+        }
+        @keyframes aurora-shift-2 {
+          0%, 100% { transform: translate(10%, 10%) scale(1); }
+          50% { transform: translate(-10%, -10%) scale(1.1); }
+        }
+        .animate-aurora-shift-1 { animation: aurora-shift-1 15s ease-in-out infinite; }
+        .animate-aurora-shift-2 { animation: aurora-shift-2 18s ease-in-out infinite; }
       `}} />
 
-      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 relative z-20 flex flex-col items-center pointer-events-auto">
-        <h2 className="section-heading text-white text-center mb-16 md:mb-24 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)] tracking-wider">
-          SKILL <span className="text-transparent bg-clip-text bg-gradient-to-r from-aurora-cyan to-aurora-purple italic drop-shadow-[0_0_30px_rgba(34,211,238,0.5)]">MATRIX</span>
+      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 relative z-20 flex flex-col items-center">
+        
+        {/* Fixed Title with separated glow so bg-clip-text doesn't break */}
+        <h2 className="section-heading text-white text-center mb-16 md:mb-24 flex items-center justify-center gap-3">
+          <span>SKILL</span>
+          <span className="relative">
+            {/* Soft glow behind the text */}
+            <span className="absolute inset-0 bg-gradient-to-r from-aurora-cyan to-aurora-purple blur-[15px] opacity-40"></span>
+            {/* The actual clipped text */}
+            <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-aurora-cyan to-aurora-purple italic">MATRIX</span>
+          </span>
         </h2>
         
-        <div className="relative w-full flex justify-center [transform-style:preserve-3d] perspective-[2000px]">
+        <div className="relative w-full flex justify-center">
           {renderGrid(desktopRows, false)}
           {renderGrid(mobileRows, true)}
         </div>
