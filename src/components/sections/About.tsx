@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { aboutBullets, education, experience, achievements, certifications } from '../../lib/data'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -271,108 +272,111 @@ export default function About() {
       </div>
 
       {/* macOS Style Resume Modal with Printing Animation */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8">
-            {/* Dark Backdrop */}
-            <motion.div 
-              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-              animate={{ opacity: 1, backdropFilter: "blur(10px)" }}
-              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-              transition={{ duration: 0.4 }}
-              className="absolute inset-0 bg-black/60" 
-              onClick={() => setIsModalOpen(false)} 
-            />
-            
-            {/* macOS Window Container */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-              className="relative z-10 w-full max-w-3xl h-[85vh] bg-[#1e1e1e] border border-white/10 rounded-xl flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden"
-            >
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {isModalOpen && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8">
+              {/* Dark Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                animate={{ opacity: 1, backdropFilter: "blur(10px)" }}
+                exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                transition={{ duration: 0.4 }}
+                className="absolute inset-0 bg-black/60" 
+                onClick={() => setIsModalOpen(false)} 
+              />
               
-              {/* macOS Traffic Light Header */}
-              <div className="flex items-center px-4 h-12 border-b border-black/50 bg-[#2d2d2d] relative shrink-0 z-20 shadow-md">
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => setIsModalOpen(false)} 
-                    className="w-3.5 h-3.5 rounded-full bg-[#ff5f56] border border-[#e0443e] hover:bg-[#ff5f56]/80 flex items-center justify-center group"
-                    aria-label="Close"
-                  >
-                    <svg className="w-2 h-2 text-black/50 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                  </button>
-                  <button className="w-3.5 h-3.5 rounded-full bg-[#ffbd2e] border border-[#dea123] cursor-default" />
-                  <button className="w-3.5 h-3.5 rounded-full bg-[#27c93f] border border-[#1aab29] cursor-default" />
+              {/* macOS Window Container */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="relative z-10 w-full max-w-3xl h-[85vh] bg-[#1e1e1e] border border-white/10 rounded-xl flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden"
+              >
+                
+                {/* macOS Traffic Light Header */}
+                <div className="flex items-center px-4 h-12 border-b border-black/50 bg-[#2d2d2d] relative shrink-0 z-20 shadow-md">
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setIsModalOpen(false)} 
+                      className="w-3.5 h-3.5 rounded-full bg-[#ff5f56] border border-[#e0443e] hover:bg-[#ff5f56]/80 flex items-center justify-center group"
+                      aria-label="Close"
+                    >
+                      <svg className="w-2 h-2 text-black/50 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                    <button className="w-3.5 h-3.5 rounded-full bg-[#ffbd2e] border border-[#dea123] cursor-default" />
+                    <button className="w-3.5 h-3.5 rounded-full bg-[#27c93f] border border-[#1aab29] cursor-default" />
+                  </div>
+                  <div className="absolute left-1/2 -translate-x-1/2 font-display font-medium text-white/50 text-xs tracking-wider">
+                    Kuramdasu_Karthik.pdf
+                  </div>
+                  {/* Download Button */}
+                  <div className="absolute right-4 flex items-center">
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const response = await fetch('/Kuramdasu_Karthik.pdf');
+                          const blob = await response.blob();
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const link = document.createElement('a');
+                            link.href = reader.result as string;
+                            link.download = 'Karthik_Kuramdasu_Resume.pdf';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          };
+                          reader.readAsDataURL(blob);
+                        } catch (err) {
+                          console.error('Download failed', err);
+                          window.open('/Kuramdasu_Karthik.pdf', '_blank');
+                        }
+                      }}
+                      className="w-7 h-7 rounded flex items-center justify-center text-white/40 hover:text-white/90 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                      title="Download Resume"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    </button>
+                  </div>
                 </div>
-                <div className="absolute left-1/2 -translate-x-1/2 font-display font-medium text-white/50 text-xs tracking-wider">
-                  Kuramdasu_Karthik.pdf
-                </div>
-                {/* Download Button */}
-                <div className="absolute right-4 flex items-center">
-                  <button 
-                    onClick={async () => {
-                      try {
-                        const response = await fetch('/Kuramdasu_Karthik.pdf');
-                        const blob = await response.blob();
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          const link = document.createElement('a');
-                          link.href = reader.result as string;
-                          link.download = 'Karthik_Kuramdasu_Resume.pdf';
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                        };
-                        reader.readAsDataURL(blob);
-                      } catch (err) {
-                        console.error('Download failed', err);
-                        window.open('/Kuramdasu_Karthik.pdf', '_blank');
-                      }
-                    }}
-                    className="w-7 h-7 rounded flex items-center justify-center text-white/40 hover:text-white/90 hover:bg-white/10 transition-all duration-300 cursor-pointer"
-                    title="Download Resume"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  </button>
-                </div>
-              </div>
 
-              {/* Body / Printer Slot */}
-              <div className="relative flex-1 bg-[#121212] w-full flex justify-center overflow-hidden">
-                
-                {/* Printing Animation Wrapper */}
-                <motion.div 
-                  initial={{ height: "0%" }}
-                  animate={{ height: "100%" }}
-                  transition={{ 
-                    duration: 1.5, 
-                    ease: [0.25, 1, 0.5, 1], // Custom slow-down printing ease
-                    delay: 0.2
-                  }}
-                  className="relative w-full max-w-[850px] bg-white origin-top overflow-hidden shadow-2xl"
-                >
-                  <iframe 
-                    src="/Kuramdasu_Karthik.pdf#toolbar=0&navpanes=0&view=Fit" 
-                    className="absolute top-0 left-0 w-full h-full border-none"
-                    title="Resume"
-                  />
+                {/* Body / Printer Slot */}
+                <div className="relative flex-1 bg-[#121212] w-full flex justify-center overflow-hidden">
                   
-                  {/* Glowing Laser line (Printer scanner effect) */}
+                  {/* Printing Animation Wrapper */}
                   <motion.div 
-                    initial={{ opacity: 1 }}
-                    animate={{ opacity: 0 }}
-                    transition={{ delay: 1.5, duration: 0.3 }}
-                    className="absolute bottom-0 left-0 w-full h-1 bg-aurora-blue shadow-[0_0_20px_10px_rgba(79,107,246,0.3)] z-10"
-                  />
-                </motion.div>
-                
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+                    initial={{ height: "0%" }}
+                    animate={{ height: "100%" }}
+                    transition={{ 
+                      duration: 1.5, 
+                      ease: [0.25, 1, 0.5, 1], // Custom slow-down printing ease
+                      delay: 0.2
+                    }}
+                    className="relative w-full max-w-[850px] bg-white origin-top overflow-hidden shadow-2xl"
+                  >
+                    <iframe 
+                      src="/Kuramdasu_Karthik.pdf#toolbar=0&navpanes=0&view=Fit" 
+                      className="absolute top-0 left-0 w-full h-full border-none"
+                      title="Resume"
+                    />
+                    
+                    {/* Glowing Laser line (Printer scanner effect) */}
+                    <motion.div 
+                      initial={{ opacity: 1 }}
+                      animate={{ opacity: 0 }}
+                      transition={{ delay: 1.5, duration: 0.3 }}
+                      className="absolute bottom-0 left-0 w-full h-1 bg-aurora-blue shadow-[0_0_20px_10px_rgba(79,107,246,0.3)] z-10"
+                    />
+                  </motion.div>
+                  
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
     </section>
   )
