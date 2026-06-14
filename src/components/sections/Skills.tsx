@@ -7,11 +7,41 @@ import AuroraBackground from '../AuroraBackground'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// Quick glitch scramble function for individual words
+const scrambleText = (element: HTMLElement, originalText: string) => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*'
+  let iteration = 0
+  const maxIterations = originalText.length
+  
+  if ((element as any).scrambleInterval) {
+    clearInterval((element as any).scrambleInterval)
+  }
+
+  const interval = setInterval(() => {
+    element.innerText = originalText
+      .split('')
+      .map((char, i) => {
+        if (i < iteration) return char
+        if (char === ' ') return ' '
+        return chars[Math.floor(Math.random() * chars.length)]
+      })
+      .join('')
+    
+    iteration += 1 / 3
+    
+    if (iteration >= maxIterations) {
+      clearInterval(interval)
+      element.innerText = originalText
+    }
+  }, 30)
+
+  ;(element as any).scrambleInterval = interval
+}
+
 export default function Skills() {
   const containerRef = useRef<HTMLElement>(null)
   const skillsWrapperRef = useRef<HTMLDivElement>(null)
 
-  // Flatten all skills into a single array for the typographic cloud
   const allSkills = Object.values(skills).flatMap(cat => cat.items)
 
   // 1. Entrance Stagger Animation
@@ -26,7 +56,7 @@ export default function Skills() {
       },
       {
         y: 0,
-        opacity: 1,
+        opacity: 0.15, // Default idle opacity is very dim to create spotlight effect
         rotateX: 0,
         duration: 1.2,
         stagger: 0.05,
@@ -39,16 +69,33 @@ export default function Skills() {
     )
   }, { scope: containerRef })
 
-  // 2. Magnetic Typography Hover Physics (Identical to Hero Section)
+  // 2. Magnetic Typography Hover Physics & Global Parallax
   useEffect(() => {
     const container = containerRef.current
+    const wrapper = skillsWrapperRef.current
     const items = gsap.utils.toArray('.skill-item') as HTMLElement[]
     
-    if (!container || !items.length) return
+    if (!container || !wrapper || !items.length) return
 
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e
+      const { innerWidth, innerHeight } = window
 
+      // Global Subtle Parallax on the entire grid
+      const xPos = (clientX / innerWidth - 0.5) * 40
+      const yPos = (clientY / innerHeight - 0.5) * 40
+      
+      gsap.to(wrapper, {
+        x: -xPos * 0.5,
+        y: -yPos * 0.5,
+        rotateX: yPos * 0.2,
+        rotateY: xPos * 0.2,
+        duration: 1,
+        ease: 'power3.out',
+        overwrite: 'auto'
+      })
+
+      // Individual Character Magnetic Pull & Spotlight
       items.forEach((item) => {
         const rect = item.getBoundingClientRect()
         const itemCenterX = rect.left + rect.width / 2
@@ -58,31 +105,39 @@ export default function Skills() {
         const distY = clientY - itemCenterY
         const distance = Math.sqrt(distX * distX + distY * distY)
 
-        const maxDistance = 250 // Magnetic pull radius
+        const maxDistance = 300 // Magnetic pull & spotlight radius
 
         if (distance < maxDistance) {
           const pull = (maxDistance - distance) / maxDistance
-          // The item pulls towards the mouse
-          const pullX = distX * pull * 0.35 // 35% of the distance towards the mouse
+          const pullX = distX * pull * 0.35 
           const pullY = distY * pull * 0.35
+
+          // Trigger scramble text once when entering magnetic field
+          if (item.dataset.isHovered !== 'true' && pull > 0.4) {
+            item.dataset.isHovered = 'true'
+            scrambleText(item, item.dataset.text!)
+          }
 
           gsap.to(item, {
             x: pullX,
             y: pullY,
-            scale: 1 + (pull * 0.15), // Slight pop up to 1.15x
-            color: '#ffffff', // Pure white core
-            textShadow: '0 0 20px rgba(79, 107, 246, 0.8)', // Aurora-blue glow
+            scale: 1 + (pull * 0.2), // Pop up slightly more
+            color: '#ffffff',
+            opacity: 0.15 + (pull * 0.85), // Brighten up to 1.0 (Spotlight Effect)
+            textShadow: `0 0 ${pull * 25}px rgba(79, 107, 246, ${pull * 0.8})`, 
             duration: 0.4,
             ease: 'power2.out',
             overwrite: 'auto'
           })
         } else {
-          // Spring back to idle state
+          // Spring back and dim out
+          item.dataset.isHovered = 'false'
           gsap.to(item, {
             x: 0,
             y: 0,
             scale: 1,
-            color: 'rgba(255, 255, 255, 0.3)', // Faded idle
+            color: '#ffffff',
+            opacity: 0.15, // Dim background state
             textShadow: '0 0 0px rgba(79, 107, 246, 0)',
             duration: 0.8,
             ease: 'elastic.out(1, 0.4)',
@@ -93,16 +148,15 @@ export default function Skills() {
     }
 
     const handleMouseLeave = () => {
+      // Reset global parallax
+      gsap.to(wrapper, { x: 0, y: 0, rotateX: 0, rotateY: 0, duration: 1, ease: 'power3.out', overwrite: 'auto' })
+      
+      // Reset items
       items.forEach((item) => {
+        item.dataset.isHovered = 'false'
         gsap.to(item, { 
-          x: 0, 
-          y: 0, 
-          scale: 1, 
-          color: 'rgba(255, 255, 255, 0.3)', 
-          textShadow: '0 0 0px rgba(79, 107, 246, 0)',
-          duration: 0.8, 
-          ease: 'elastic.out(1, 0.4)', 
-          overwrite: 'auto' 
+          x: 0, y: 0, scale: 1, color: '#ffffff', opacity: 0.15, textShadow: '0 0 0px rgba(79, 107, 246, 0)',
+          duration: 0.8, ease: 'elastic.out(1, 0.4)', overwrite: 'auto' 
         })
       })
     }
@@ -120,7 +174,7 @@ export default function Skills() {
     <section 
       ref={containerRef} 
       id="skills" 
-      className="py-32 md:py-48 relative overflow-hidden bg-[#000000] min-h-screen flex flex-col justify-center z-10"
+      className="py-32 md:py-48 relative overflow-hidden bg-[#000000] min-h-[100vh] flex flex-col justify-center z-10"
     >
       {/* Deep Aurora Background matching the Hero aesthetic */}
       <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
@@ -141,14 +195,15 @@ export default function Skills() {
         {/* Minimalist Typographic Cloud */}
         <div 
           ref={skillsWrapperRef}
-          className="flex flex-wrap justify-center items-center gap-x-8 gap-y-6 md:gap-x-16 md:gap-y-10 max-w-5xl"
+          className="flex flex-wrap justify-center items-center gap-x-8 gap-y-6 md:gap-x-16 md:gap-y-10 max-w-5xl [transform-style:preserve-3d]"
           style={{ perspective: '1200px' }}
         >
           {allSkills.map((skill, i) => (
             <div 
               key={i} 
+              data-text={skill}
               className="skill-item inline-block cursor-crosshair transform-gpu text-[clamp(1rem,2vw,1.5rem)] font-mono tracking-[0.2em] uppercase transition-colors will-change-transform"
-              style={{ color: 'rgba(255, 255, 255, 0.3)' }}
+              style={{ color: '#ffffff', opacity: 0 }}
             >
               {skill}
             </div>
