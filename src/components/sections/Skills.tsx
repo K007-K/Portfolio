@@ -1,92 +1,139 @@
-// Skills section — infinite GSAP marquee with pause-on-hover and glow effects
 import { useRef } from 'react'
 import { skills } from '../../lib/data'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export default function Skills() {
   const containerRef = useRef<HTMLElement>(null)
-  const row1Ref = useRef<HTMLDivElement>(null)
-  const row2Ref = useRef<HTMLDivElement>(null)
-  const tween1Ref = useRef<gsap.core.Tween | null>(null)
-  const tween2Ref = useRef<gsap.core.Tween | null>(null)
-
+  
   const allSkills = Object.values(skills).flatMap(cat => cat.items)
-  const row1 = allSkills.slice(0, Math.ceil(allSkills.length / 2))
-  const row2 = allSkills.slice(Math.ceil(allSkills.length / 2))
+  
+  // Chunking helper to create the honeycomb rows
+  const createChunks = (arr: string[], pattern: number[]) => {
+    const chunks = []
+    let i = 0
+    let patternIdx = 0
+    while (i < arr.length) {
+      const size = pattern[patternIdx % pattern.length]
+      chunks.push(arr.slice(i, i + size))
+      i += size
+      patternIdx++
+    }
+    return chunks
+  }
+
+  // Desktop pattern: 6, 5, 6, 5...
+  const desktopRows = createChunks(allSkills, [6, 5])
+  
+  // Mobile pattern: 3, 2, 3, 2...
+  const mobileRows = createChunks(allSkills, [3, 2])
 
   useGSAP(() => {
-    tween1Ref.current = gsap.to(row1Ref.current, {
-      xPercent: -50,
-      ease: 'none',
-      duration: 40,
-      repeat: -1,
-    })
-
-    tween2Ref.current = gsap.fromTo(row2Ref.current,
-      { xPercent: -50 },
-      {
-        xPercent: 0,
-        ease: 'none',
-        duration: 45,
-        repeat: -1,
+    // Honeycomb Assembly Animation
+    gsap.from('.hex-cell', {
+      opacity: 0,
+      scale: 0,
+      y: 60,
+      rotateZ: -15,
+      duration: 0.9,
+      stagger: {
+        amount: 1.5,
+        from: "center",
+        grid: "auto"
+      },
+      ease: 'back.out(1.2)',
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top 75%',
       }
-    )
+    })
   }, { scope: containerRef })
 
-  const handleMouseEnter = () => {
-    if (tween1Ref.current) gsap.to(tween1Ref.current, { timeScale: 0, duration: 0.5 })
-    if (tween2Ref.current) gsap.to(tween2Ref.current, { timeScale: 0, duration: 0.5 })
-  }
-
-  const handleMouseLeave = () => {
-    if (tween1Ref.current) gsap.to(tween1Ref.current, { timeScale: 1, duration: 0.8 })
-    if (tween2Ref.current) gsap.to(tween2Ref.current, { timeScale: 1, duration: 0.8 })
-  }
-
-  return (
-    <section ref={containerRef} id="skills" className="py-28 relative overflow-hidden bg-transparent border-y border-white/[0.04] z-10">
-      <div className="w-full max-w-7xl mx-auto px-6 md:px-12 mb-16 md:mb-24 relative z-20">
-        <h2 className="section-heading text-text-primary text-center">
-          SKILL <span className="text-aurora-purple italic">MATRIX</span>
-        </h2>
-      </div>
-
-      <div
-        className="flex flex-col gap-6 overflow-hidden relative"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+  const Hexagon = ({ skill }: { skill: string }) => (
+    <div className="hex-cell relative group cursor-crosshair transition-transform duration-500 hover:scale-110 hover:z-50 w-[94px] h-[108px] md:w-[124px] md:h-[143px] lg:w-[144px] lg:h-[166px]">
+      
+      {/* 
+        Vertical Hexagon Clip Path 
+        Aspect ratio constraint: W = H * 0.866
+      */}
+      <div 
+        className="absolute inset-0 bg-space-800/40 backdrop-blur-xl flex items-center justify-center p-3 text-center transition-all duration-500 border-2 border-transparent group-hover:bg-aurora-purple/20"
+        style={{ 
+          clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+          WebkitClipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+        }}
       >
-        {/* Fade masks */}
-        <div className="absolute inset-y-0 left-0 w-20 md:w-48 bg-gradient-to-r from-space-900 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-20 md:w-48 bg-gradient-to-l from-space-900 to-transparent z-10 pointer-events-none" />
+        {/* Inner glass layer to create border effect within clip-path */}
+        <div 
+          className="absolute inset-[1px] bg-white/[0.02] flex items-center justify-center p-2 transition-all duration-500 group-hover:bg-white/[0.05] group-hover:shadow-[inset_0_0_30px_rgba(139,92,246,0.3)]"
+          style={{ 
+            clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+            WebkitClipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+          }}
+        >
+          <span className="font-display font-medium text-[10px] md:text-xs lg:text-sm text-text-secondary group-hover:text-white transition-colors duration-300 drop-shadow-md">
+            {skill}
+          </span>
+        </div>
+      </div>
+      
+      {/* Outer Glow on Hover */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl bg-aurora-purple/40 -z-10"
+        style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+      />
+    </div>
+  )
 
-        {/* Row 1 — moves left */}
-        <div ref={row1Ref} className="flex whitespace-nowrap w-max gap-3 md:gap-5">
-          {[...row1, ...row1, ...row1, ...row1].map((skill, i) => (
-            <div
-              key={`r1-${i}`}
-              className="inline-flex items-center justify-center px-5 md:px-8 py-3 rounded-full border border-white/[0.06] bg-white/[0.02] hover:border-aurora-purple/40 hover:bg-aurora-purple/[0.06] hover:shadow-[0_0_25px_-5px_rgba(139,92,246,0.3)] transition-all duration-300 cursor-default select-none group"
-            >
-              <span className="font-display font-medium text-sm md:text-lg tracking-wide text-text-secondary group-hover:text-text-primary uppercase transition-colors duration-300">
-                {skill}
-              </span>
+  const renderGrid = (rows: string[][], isMobile: boolean) => (
+    <div className={`flex-col items-center justify-center w-full ${isMobile ? 'flex md:hidden' : 'hidden md:flex'}`}>
+      {rows.map((row, rowIndex) => (
+        <div 
+          key={rowIndex} 
+          className="flex justify-center"
+          style={{ 
+            // Negative margin pulls the next row up by exactly 25% of the hexagon height 
+            // so the points interlock perfectly.
+            // Mobile H = 108px -> 25% = 27px
+            // Tablet H = 143px -> 25% = 35.75px
+            // Desktop H = 166px -> 25% = 41.5px
+            marginTop: rowIndex === 0 ? '0' : 'var(--hex-offset)',
+          }}
+        >
+          {row.map((skill, colIndex) => (
+            <div key={colIndex} className="px-[2px]"> {/* 2px horizontal gap */}
+              <Hexagon skill={skill} />
             </div>
           ))}
         </div>
+      ))}
+    </div>
+  )
 
-        {/* Row 2 — moves right */}
-        <div ref={row2Ref} className="flex whitespace-nowrap w-max gap-3 md:gap-5">
-          {[...row2, ...row2, ...row2, ...row2].map((skill, i) => (
-            <div
-              key={`r2-${i}`}
-              className="inline-flex items-center justify-center px-5 md:px-8 py-3 rounded-full border border-white/[0.06] bg-white/[0.02] hover:border-aurora-blue/40 hover:bg-aurora-blue/[0.06] hover:shadow-[0_0_25px_-5px_rgba(79,107,246,0.3)] transition-all duration-300 cursor-default select-none group"
-            >
-              <span className="font-display font-medium text-sm md:text-lg tracking-wide text-text-secondary group-hover:text-text-primary uppercase transition-colors duration-300">
-                {skill}
-              </span>
-            </div>
-          ))}
+  return (
+    <section ref={containerRef} id="skills" className="py-24 md:py-36 relative overflow-hidden bg-transparent z-10">
+      
+      {/* Responsive variables for the negative margin offset */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @media (max-width: 767px) { :root { --hex-offset: -27px; } }
+        @media (min-width: 768px) and (max-width: 1023px) { :root { --hex-offset: -35.75px; } }
+        @media (min-width: 1024px) { :root { --hex-offset: -41.5px; } }
+      `}} />
+
+      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-12 relative z-20 flex flex-col items-center">
+        <h2 className="section-heading text-text-primary text-center mb-16 md:mb-24">
+          SKILL <span className="text-aurora-purple italic">MATRIX</span>
+        </h2>
+        
+        <div className="relative w-full flex justify-center">
+          {/* Background Ambient Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-aurora-purple/10 blur-[100px] rounded-full pointer-events-none" />
+          
+          {renderGrid(desktopRows, false)}
+          {renderGrid(mobileRows, true)}
         </div>
       </div>
     </section>
