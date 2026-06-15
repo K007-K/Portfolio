@@ -16,7 +16,23 @@ export default function Projects() {
           height: 'auto', 
           opacity: 1, 
           duration: 0.7, 
-          ease: 'power3.out' 
+          ease: 'power3.out',
+          onComplete: () => {
+            // On mobile, ensure the opened project stays in view smoothly
+            if (window.innerWidth < 768) {
+              const parent = content.parentElement
+              if (parent) {
+                const rect = parent.getBoundingClientRect()
+                if (rect.top < 80 || rect.bottom > window.innerHeight) {
+                  const scrollY = window.scrollY || window.pageYOffset
+                  window.scrollTo({
+                    top: scrollY + rect.top - 100, // Leave 100px padding at top
+                    behavior: 'smooth'
+                  })
+                }
+              }
+            }
+          }
         })
       } else {
         gsap.to(content, { 
@@ -44,7 +60,7 @@ export default function Projects() {
             return (
               <div 
                 key={project.title}
-                className={`border-t border-white/[0.04] transition-all duration-700 ${isDimmed ? 'opacity-20 blur-[2px] grayscale' : 'opacity-100'} group cursor-pointer`}
+                className={`border-t border-white/[0.04] transition-all duration-700 ${isDimmed ? 'opacity-40 grayscale-[50%]' : 'opacity-100'} group cursor-pointer`}
                 onClick={() => setActiveIndex(isExpanded ? null : i)}
               >
                 {/* Accordion Header Row */}
@@ -76,7 +92,7 @@ export default function Projects() {
                   className="overflow-hidden h-0 opacity-0 px-4 md:px-8"
                 >
                   <div className="pb-12 pt-4">
-                    <div className="interactive-physics w-full rounded-3xl overflow-hidden bg-space-800/30 dark:bg-gradient-to-br dark:from-white/[0.02] dark:to-white/[0.05] backdrop-blur-3xl border border-space-border dark:border-white/10 p-8 md:p-12 shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col lg:flex-row gap-12 lg:gap-16 cursor-default">
+                    <div className="interactive-physics w-full rounded-3xl overflow-hidden bg-space-800/30 dark:bg-gradient-to-br dark:from-white/[0.02] dark:to-white/[0.05] backdrop-blur-xl border border-space-border dark:border-white/10 p-8 md:p-12 shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col lg:flex-row gap-12 lg:gap-16 cursor-default">
                       
                       <div className="flex-1">
                         <span className="font-mono text-[10px] tracking-widest uppercase text-aurora-blue mb-6 block">

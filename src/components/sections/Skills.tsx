@@ -82,18 +82,21 @@ export default function Skills() {
       const { innerWidth, innerHeight } = window
 
       // Global Subtle Parallax on the entire grid
-      const xPos = (clientX / innerWidth - 0.5) * 40
-      const yPos = (clientY / innerHeight - 0.5) * 40
-      
-      gsap.to(wrapper, {
-        x: -xPos * 0.5,
-        y: -yPos * 0.5,
-        rotateX: yPos * 0.2,
-        rotateY: xPos * 0.2,
-        duration: 1,
-        ease: 'power3.out',
-        overwrite: 'auto'
-      })
+      // Disable on mobile to prevent sticking/lag
+      if (innerWidth >= 768) {
+        const xPos = (clientX / innerWidth - 0.5) * 40
+        const yPos = (clientY / innerHeight - 0.5) * 40
+        
+        gsap.to(wrapper, {
+          x: -xPos * 0.5,
+          y: -yPos * 0.5,
+          rotateX: yPos * 0.2,
+          rotateY: xPos * 0.2,
+          duration: 1,
+          ease: 'power3.out',
+          overwrite: 'auto'
+        })
+      }
 
       // Individual Character Magnetic Pull & Spotlight
       items.forEach((item) => {
@@ -105,7 +108,8 @@ export default function Skills() {
         const distY = clientY - itemCenterY
         const distance = Math.sqrt(distX * distX + distY * distY)
 
-        const maxDistance = 300 // Magnetic pull & spotlight radius
+        // Smaller spotlight radius on mobile so it focuses on the center
+        const maxDistance = innerWidth < 768 ? 180 : 300 
 
         if (distance < maxDistance) {
           const pull = (maxDistance - distance) / maxDistance
@@ -165,8 +169,20 @@ export default function Skills() {
     window.addEventListener('mousemove', handleMouseMove)
     container.addEventListener('mouseleave', handleMouseLeave)
 
+    // Mobile Virtual Mouse: Simulate a mouse hovering in the center of the screen as the user scrolls
+    const handleScroll = () => {
+      if (window.innerWidth < 768) {
+        const virtualX = window.innerWidth / 2
+        const virtualY = window.innerHeight / 2
+        handleMouseMove({ clientX: virtualX, clientY: virtualY } as MouseEvent)
+      }
+    }
+    
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('scroll', handleScroll)
       container.removeEventListener('mouseleave', handleMouseLeave)
     }
   }, [])
