@@ -75,11 +75,16 @@ export default function About() {
     // Mobile auto-hover on scroll
     if (window.innerWidth < 768) {
       interactives.forEach(el => {
+        const isExperienceCard = el.classList.contains('experience-card')
+        
         ScrollTrigger.create({
           trigger: el,
           start: 'top 70%',
+          end: 'bottom 40%',
           onEnter: () => el.classList.add('mobile-hovered'),
-          once: true
+          onEnterBack: () => el.classList.add('mobile-hovered'),
+          onLeave: () => { if (!isExperienceCard) el.classList.remove('mobile-hovered') },
+          onLeaveBack: () => { if (!isExperienceCard) el.classList.remove('mobile-hovered') }
         })
       })
     }
@@ -155,7 +160,7 @@ export default function About() {
           <div className="w-full h-full flex flex-col justify-center">
             {experience.map((exp, i) => (
               <div key={i} className="stagger-enter w-full">
-                <div className="interactive-physics relative w-full group p-8 md:p-12 bg-space-800/30 dark:bg-gradient-to-b dark:from-white/[0.04] dark:to-transparent backdrop-blur-3xl border border-space-border dark:border-white/10 rounded-[2rem] cursor-crosshair overflow-hidden flex flex-col justify-start transition-all duration-500 ease-in-out shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:border-text-primary/20 dark:hover:border-white/30 z-20">
+                <div className="interactive-physics experience-card relative w-full group p-8 md:p-12 bg-space-800/30 dark:bg-gradient-to-b dark:from-white/[0.04] dark:to-transparent backdrop-blur-3xl border border-space-border dark:border-white/10 rounded-[2rem] cursor-crosshair overflow-hidden flex flex-col justify-start transition-all duration-500 ease-in-out shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:border-text-primary/20 dark:hover:border-white/30 z-20">
                 
                 {/* Title Section */}
                 <div className="relative z-10 transition-transform duration-500 ease-in-out group-hover:-translate-y-2 group-[.mobile-hovered]:-translate-y-2">
