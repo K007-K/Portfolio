@@ -72,6 +72,18 @@ export default function About() {
       return { el, moveHandler, leaveHandler }
     })
     
+    // Mobile auto-hover on scroll
+    if (window.innerWidth < 768) {
+      interactives.forEach(el => {
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 60%',
+          end: 'bottom 40%',
+          toggleClass: 'mobile-hovered',
+        })
+      })
+    }
+    
     return () => {
       listeners.forEach(({ el, moveHandler, leaveHandler }) => {
         el.removeEventListener('mousemove', moveHandler)
@@ -146,34 +158,34 @@ export default function About() {
                 <div className="interactive-physics relative w-full group p-8 md:p-12 bg-space-800/30 dark:bg-gradient-to-b dark:from-white/[0.04] dark:to-transparent backdrop-blur-3xl border border-space-border dark:border-white/10 rounded-[2rem] cursor-crosshair overflow-hidden flex flex-col justify-start transition-all duration-500 ease-in-out shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:border-text-primary/20 dark:hover:border-white/30 z-20">
                 
                 {/* Title Section */}
-                <div className="relative z-10 transition-transform duration-500 ease-in-out group-hover:-translate-y-2">
+                <div className="relative z-10 transition-transform duration-500 ease-in-out group-hover:-translate-y-2 group-[.mobile-hovered]:-translate-y-2">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-2 h-2 rounded-full bg-text-primary shadow-[0_0_10px_currentColor] animate-pulse" />
                     <span className="font-display font-bold text-[11px] tracking-[0.4em] uppercase text-text-secondary">
                       Experience
                     </span>
                   </div>
-                  <h4 className="font-display font-black text-5xl md:text-6xl text-text-primary tracking-tighter leading-none mb-4 transition-all duration-500 group-hover:scale-[1.02] origin-left drop-shadow-sm">
+                  <h4 className="font-display font-black text-5xl md:text-6xl text-text-primary tracking-tighter leading-none mb-4 transition-all duration-500 group-hover:scale-[1.02] group-[.mobile-hovered]:scale-[1.02] origin-left drop-shadow-sm">
                     {exp.company}
                   </h4>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                    <span className="font-display font-semibold text-xl text-text-primary/90 group-hover:text-text-primary transition-colors duration-500">{exp.role}</span>
+                    <span className="font-display font-semibold text-xl text-text-primary/90 group-hover:text-text-primary group-[.mobile-hovered]:text-text-primary transition-colors duration-500">{exp.role}</span>
                     <span className="hidden sm:block w-1 h-1 rounded-full bg-space-border dark:bg-white/20" />
-                    <span className="font-mono text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 border border-space-border dark:border-white/10 rounded-full bg-space-800 dark:bg-black/40 text-text-secondary group-hover:border-text-primary/20 transition-all duration-500">
+                    <span className="font-mono text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 border border-space-border dark:border-white/10 rounded-full bg-space-800 dark:bg-black/40 text-text-secondary group-hover:border-text-primary/20 group-[.mobile-hovered]:border-text-primary/20 transition-all duration-500">
                       {exp.period}
                     </span>
                   </div>
                 </div>
 
                 {/* The Reveal Fold */}
-                <div className="relative z-10 grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out mt-0 group-hover:mt-6">
+                <div className="relative z-10 grid grid-rows-[0fr] group-hover:grid-rows-[1fr] group-[.mobile-hovered]:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out mt-0 group-hover:mt-6 group-[.mobile-hovered]:mt-6">
                   <div className="overflow-hidden space-y-3">
                     {exp.highlights.map((h, j) => (
                       <div 
                         key={j} 
-                        className="font-display text-sm md:text-base text-text-secondary group-hover:text-text-primary/95 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 leading-snug flex items-start gap-3"
+                        className="font-display text-sm md:text-base text-text-secondary group-hover:text-text-primary/95 group-[.mobile-hovered]:text-text-primary/95 opacity-0 group-hover:opacity-100 group-[.mobile-hovered]:opacity-100 transition-all duration-500 delay-100 leading-snug flex items-start gap-3"
                       >
-                        <div className="mt-1.5 w-1.5 h-1.5 shrink-0 rounded-full bg-text-secondary/50 group-hover:bg-text-primary group-hover:shadow-[0_0_8px_currentColor] transition-all duration-500" />
+                        <div className="mt-1.5 w-1.5 h-1.5 shrink-0 rounded-full bg-text-secondary/50 group-hover:bg-text-primary group-[.mobile-hovered]:bg-text-primary group-hover:shadow-[0_0_8px_currentColor] group-[.mobile-hovered]:shadow-[0_0_8px_currentColor] transition-all duration-500" />
                         <p>{h}</p>
                       </div>
                     ))}
@@ -247,20 +259,20 @@ export default function About() {
                 setIsModalOpen(true);
                 setIsPdfLoaded(false);
               }}
-              className="interactive-physics group relative w-full h-full min-h-[350px] rounded-[2rem] border border-space-border dark:border-white/10 bg-space-800/30 dark:bg-gradient-to-t dark:from-white/[0.02] dark:to-white/[0.05] backdrop-blur-3xl flex flex-col items-center justify-center overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:border-text-primary/30 dark:hover:border-white/30 transition-all duration-500 block text-left"
+              className="interactive-physics group relative w-full h-full min-h-[350px] rounded-[2rem] border border-space-border dark:border-white/10 bg-space-800/30 dark:bg-gradient-to-t dark:from-white/[0.02] dark:to-white/[0.05] backdrop-blur-xl flex flex-col items-center justify-center overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:border-text-primary/30 dark:hover:border-white/30 group-[.mobile-hovered]:border-text-primary/30 transition-all duration-500 block text-left"
             >
-            <div className="absolute inset-0 bg-text-primary translate-y-[101%] group-hover:translate-y-0 transition-transform duration-[0.6s] ease-[cubic-bezier(0.19,1,0.22,1)]" />
+            <div className="absolute inset-0 bg-text-primary translate-y-[101%] group-hover:translate-y-0 group-[.mobile-hovered]:translate-y-0 transition-transform duration-[0.6s] ease-[cubic-bezier(0.19,1,0.22,1)]" />
             
             <div className="relative z-10 text-center flex flex-col items-center">
-              <span className="font-mono text-[11px] font-bold tracking-[0.4em] uppercase text-text-secondary group-hover:text-space-800 mb-6 transition-colors duration-500">
+              <span className="font-mono text-[11px] font-bold tracking-[0.4em] uppercase text-text-secondary group-hover:text-space-800 group-[.mobile-hovered]:text-space-800 mb-6 transition-colors duration-500">
                 Full Document
               </span>
-              <h3 className="font-hero text-7xl uppercase leading-none text-text-primary group-hover:text-space-900 transition-colors duration-500 tracking-tighter drop-shadow-md group-hover:drop-shadow-none">
+              <h3 className="font-hero text-7xl uppercase leading-none text-text-primary group-hover:text-space-900 group-[.mobile-hovered]:text-space-900 transition-colors duration-500 tracking-tighter drop-shadow-md group-hover:drop-shadow-none group-[.mobile-hovered]:drop-shadow-none">
                 View<br/>Résumé
               </h3>
               
-              <div className="mt-10 w-14 h-14 rounded-full border border-space-border dark:border-white/30 group-hover:border-space-900/30 flex items-center justify-center transition-colors duration-500 bg-space-800/30 dark:bg-white/5 group-hover:bg-space-900/10">
-                <svg className="w-6 h-6 text-text-primary group-hover:text-space-900 transition-colors duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="mt-10 w-14 h-14 rounded-full border border-space-border dark:border-white/30 group-hover:border-space-900/30 group-[.mobile-hovered]:border-space-900/30 flex items-center justify-center transition-colors duration-500 bg-space-800/30 dark:bg-white/5 group-hover:bg-space-900/10 group-[.mobile-hovered]:bg-space-900/10">
+                <svg className="w-6 h-6 text-text-primary group-hover:text-space-900 group-[.mobile-hovered]:text-space-900 transition-colors duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
               </div>

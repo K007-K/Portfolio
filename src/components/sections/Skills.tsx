@@ -113,8 +113,10 @@ export default function Skills() {
 
         if (distance < maxDistance) {
           const pull = (maxDistance - distance) / maxDistance
-          const pullX = distX * pull * 0.35 
-          const pullY = distY * pull * 0.35
+          // Disable physical pull on mobile to prevent words from overlapping
+          const isMobile = innerWidth < 768
+          const pullX = isMobile ? 0 : distX * pull * 0.35 
+          const pullY = isMobile ? 0 : distY * pull * 0.35
 
           // Trigger scramble text once when entering magnetic field
           if (item.dataset.isHovered !== 'true' && pull > 0.4) {
@@ -173,7 +175,8 @@ export default function Skills() {
     const handleScroll = () => {
       if (window.innerWidth < 768) {
         const virtualX = window.innerWidth / 2
-        const virtualY = window.innerHeight / 2
+        // Shift virtual Y slightly up to account for mobile browser UI at the bottom
+        const virtualY = window.innerHeight * 0.45 
         handleMouseMove({ clientX: virtualX, clientY: virtualY } as MouseEvent)
       }
     }
