@@ -250,7 +250,7 @@ export default function Hero() {
         ref={scrollIndicatorRef}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-scroll-pulse"
       >
-        <span className="font-mono text-[10px] tracking-[0.3em] ml-[0.3em] uppercase text-text-secondary">
+        <span className="font-mono text-[10px] tracking-[0.3em] pl-[0.3em] uppercase text-text-secondary">
           Scroll
         </span>
         <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
