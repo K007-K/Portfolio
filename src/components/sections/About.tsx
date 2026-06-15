@@ -77,9 +77,9 @@ export default function About() {
       interactives.forEach(el => {
         ScrollTrigger.create({
           trigger: el,
-          start: 'top 60%',
-          end: 'bottom 40%',
-          toggleClass: 'mobile-hovered',
+          start: 'top 70%',
+          onEnter: () => el.classList.add('mobile-hovered'),
+          once: true
         })
       })
     }
